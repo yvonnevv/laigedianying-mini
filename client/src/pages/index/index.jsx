@@ -1,26 +1,41 @@
 import React, { Component } from 'react'
-import Taro from '@tarojs/taro'
-import { View, Text } from '@tarojs/components'
+import { View, ScrollView, Input, Icon, Image } from '@tarojs/components'
+
+import MovieList from '../../components/MovieList'
+
 import './index.less'
 
-import Login from '../../components/login/index'
+const LOGO_IMG = require('./images/logo.png');
 
 export default class Index extends Component {
 
-  componentWillMount () { }
+  renderInput() {
+    return (
+      <View className="home-search">
+        <View className="home-search__main">
+          <Input
+            className="home-search__main-input"
+            placeholder="输入片名搜索"
+            placeholderClass="home-search__main-placeholder"
+          />
+          <Icon className="home-search__main-icon" type="search" size="14" />
+        </View>
+        { LOGO_IMG && <Image className="home-search__logo" src="./images/logo.png" />}
+      </View>
+    )
+  }
 
-  componentDidMount () { }
+  renderScroll() {
+    return (
+      <MovieList type={0} />
+    )
+  }
 
-  componentWillUnmount () { }
-
-  componentDidShow () { }
-
-  componentDidHide () { }
-
-  render () {
+  render() {
     return (
       <View className='index'>
-        <Login/>
+        {this.renderInput()}
+        {this.renderScroll()}
       </View>
     )
   }

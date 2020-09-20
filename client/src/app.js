@@ -1,25 +1,32 @@
 import React, { Component } from 'react'
 import Taro from '@tarojs/taro'
+import { Provider } from 'react-redux'
+
+import configStore from './store'
+const store = configStore()
 
 import './app.less'
 
 class App extends Component {
 
-  componentDidMount () {
+  componentWillMount() {
     if (process.env.TARO_ENV === 'weapp') {
       Taro.cloud.init()
     }
   }
 
-  componentDidShow () {}
+  componentDidShow() { }
 
-  componentDidHide () {}
+  componentDidHide() { }
 
-  componentDidCatchError () {}
+  componentDidCatchError() { }
 
-  // this.props.children 是将要会渲染的页面
-  render () {
-    return this.props.children
+  render() {
+    return (
+      <Provider store={store}>
+        {this.props.children}
+      </Provider>
+    )
   }
 }
 
