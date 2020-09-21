@@ -6,16 +6,19 @@ export const GET_MOVIE_SUCCESS = 'GET_MOVIE_SUCCESS';
 
 import { getCloudApi } from './utils';
 
-function doRequestList() {
+function doRequestList(more) {
+    console.log('actionMore', more);
     return {
-        type: GET_MOVIE_LIST
+        type: GET_MOVIE_LIST,
+        isMore: more
     }
 }
 
-function doRequestListSuccess(data) {
+function doRequestListSuccess(data, more) {
     return {
         type: GET_MOVIE_LIST_SUCCESS,
-        data
+        data,
+        isMore: more
     }
 }
 
@@ -33,16 +36,24 @@ function doRequestInfoSuccess(data) {
     }
 }
 
-export function getMovieList(params) {
+let pageStart = 0;
+let pageLimit = 10;
+
+export function getMovieList({ tag, more }) {
     return dispatch => {
+        pageStart = more ? pageStart + 10 : 0;
         getCloudApi('douban', {
             type: 'movieList',
-            params
+            params: {
+                tag,
+                page_start: pageStart,
+                page_limit: pageLimit
+            }
         }, (data) => {
-            return dispatch(doRequestListSuccess(data));
+            return dispatch(doRequestListSuccess(data, more));
         });
     
-        return dispatch(doRequestList());
+        return dispatch(doRequestList(more));
     }
 };
 

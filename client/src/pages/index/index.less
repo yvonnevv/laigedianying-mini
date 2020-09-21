@@ -1,3 +1,7 @@
+.home {
+    height: 1200px;
+}
+
 .home-search {
     margin: 25px 27px;
     display: flex;
@@ -33,5 +37,35 @@
         width: 80px;
         height: 52px;
         margin-left: 28px;
+    }
+}
+
+.home-tab {
+    height: 104px;
+    display: flex;
+    box-shadow: 0 10px 12px 0px rgba(41, 41, 41, 0.04);
+    align-items: center;
+
+    &__item {
+        flex: 1;
+        text-align: center;
+        font-size: 26px;
+        font-family: PingFang;
+
+        &.active {
+            .home-tab__text {
+                color: #FE5C58;
+                border-bottom: 5px solid #FE5C58;
+            }
+        }
+    }
+
+    &__text {
+        height: 104px;
+        line-height: 104px;
+        display: inline-block;
+        color: #303030;
+        padding: 0 10px;
+        box-sizing: border-box;
     }
 }

@@ -19,16 +19,21 @@ export function movieList(state = {
             update = { loaded: false }
             break;
         case GET_MOVIE_LIST_SUCCESS: {
-            const { data } = action;
+            const { data, isMore } = action;
             const { subjects, tag } = data;
-            let { list } = state;
+            let { highscore, hot } = state.list;
 
-            tag && (list = Object.assign({}, list, { highscore: subjects }));
-            !tag && (list = Object.assign({}, list, { hot: subjects }))
-            
+            console.log('tag:', action);
+
+            tag && (isMore ? highscore.push(...subjects) : highscore = subjects);
+            !tag && (isMore ? hot.push(...subjects) : hot = subjects);
+
             update = { 
                 loaded: true, 
-                list
+                list: {
+                    highscore,
+                    hot
+                }
             }
             break;
         }  
