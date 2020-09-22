@@ -28,7 +28,6 @@ class Index extends Component {
   }
 
   onScrollToLower() {
-    console.log('?????');
     if (!this.props.movieList.loaded) return;
     this.fetchData({ more: true });
   }
