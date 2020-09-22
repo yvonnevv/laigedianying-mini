@@ -10,21 +10,18 @@ export function movieList(state = {
         hot: [],
         highscore: []
     },
-    loaded: true
+    loaded: false
 }, action) {
     const { type } = action;
     let update = {};
     switch (type) {
         case GET_MOVIE_LIST:
-            update = { loaded: false }
+            update = { loaded: false };
             break;
         case GET_MOVIE_LIST_SUCCESS: {
             const { data, isMore } = action;
             const { subjects, tag } = data;
             let { highscore, hot } = state.list;
-
-            console.log('tag:', action);
-
             tag && (isMore ? highscore.push(...subjects) : highscore = subjects);
             !tag && (isMore ? hot.push(...subjects) : hot = subjects);
 
@@ -37,6 +34,28 @@ export function movieList(state = {
             }
             break;
         }  
+        default:
+            break;
+    }
+
+    return Object.keys(update).length ? Object.assign({}, state, update) : state;
+}
+
+export function movieInfo(state = {
+  info: {},
+  loaded: false
+}, action) {
+    const { type } = action;
+    let update = {};
+
+    switch(type) {
+        case GET_MOVIE_INFO:
+            update = { loaded: false };
+            break;
+        case GET_MOVIE_INFO_SUCCESS:
+            const { data } = action;
+            update = { loaded: true, info: data };
+            break;
         default:
             break;
     }

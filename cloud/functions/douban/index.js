@@ -1,5 +1,8 @@
 
 const request = require('async-request');
+const superagent = require('superagent');
+const cheerio = require('cheerio');
+
 const {
     DOUBAN
 } = require('./config');
@@ -25,6 +28,19 @@ async function getMovieList({
     };
 }
 
+function infoParse(infoText) {
+    infoText = infoText.split(':')[1].trim();
+    let infoArr = infoText.split(' / ');
+    let parseInfoText = '';
+
+    infoArr = infoArr.splice(0, 2);
+    infoArr.forEach(item => {
+        parseInfoText += `#${item} `;
+    });
+
+    return parseInfoText.trim();
+}
+
 async function getMovieInfo({ id }) {
     const uri = `${DOUBAN.info}/${id}`;
     try {
@@ -33,23 +49,39 @@ async function getMovieInfo({ id }) {
         const $ = cheerio.load(docs.text);
         const summary = $('#link-report span').text().trim();
         const infosArr = $('#info').text().split('\n');
+        const score = $('.rating_wrap .rating_num').text();
+        const star = /\d+/.exec($('.bigstar').attr('class'))[0];
+        const cover = $('#mainpic img').attr('src');
+        const shortComment = $('#hot-comments .short');
+        let shortText = '';
 
-        let type = infosArr.filter(info => /类型/.test(info))[0];
-        let countries = infosArr.filter(info => /国家|地区/.test(info))[0];
-        let actors = infosArr.filter(info => /主演/.test(info))[0];
-        let year = $('#content .year').text();
+        Array.from(shortComment).forEach(short => {
+          const dataText = short.children[0].data;
+          console.log('dataText', dataText);
+          if (!shortText && dataText.length >= 15 && dataText.length <= 120) shortText = short.children[0].data;
+        });
 
-        type = type.split(':')[1].trim();
-        countries = countries.split(':')[1].trim();
-        actors = actors.split(':')[1].trim();
-        year = /\d+/.exec(year)[0]
+        let typeText = infosArr.filter(info => /类型/.test(info))[0];
+        let countriesText = infosArr.filter(info => /国家|地区/.test(info))[0];
+        let actorsText = infosArr.filter(info => /主演/.test(info))[0];
+        let year = /\d+/.exec($('#content .year').text())[0];
 
-        console.log(type, countries, actors, year);
+
+        const type = infoParse(typeText);
+        const countries = infoParse(countriesText);
+        const actors = infoParse(actorsText);
+
+        const extraInfo = `#${year} ${countries} ${type} ${actors}`;
 
         return {
             retcode: 0,
             result: {
-                summary
+                extraInfo,
+                summary,
+                score,
+                star,
+                cover,
+                shortText
             }
         }
 
