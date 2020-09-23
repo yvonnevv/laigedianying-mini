@@ -4,35 +4,17 @@ export const GET_MOVIE_LIST_SUCCESS = 'GET_MOVIE_LIST_SUCCESS';
 export const GET_MOVIE_INFO = 'GET_MOVIE_INFO';
 export const GET_MOVIE_INFO_SUCCESS = 'GET_MOVIE_INFO_SUCCESS';
 
+export const SEARCH_MOVIE = 'SEARCH_MOVIE';
+export const SEARCH_MOVIE_SUCCESS = 'SEARCH_MOVIE_SUCCESS';
+
 import { getCloudApi } from './utils';
 
-function doRequestList(more) {
-    return {
-        type: GET_MOVIE_LIST,
-        isMore: more
-    }
-}
-
-function doRequestListSuccess(data, more) {
-    return {
-        type: GET_MOVIE_LIST_SUCCESS,
-        data,
-        isMore: more
-    }
-}
-
-
-function doRequestInfo() {
-    return {
-        type: GET_MOVIE_INFO
-    }
-}
-
-function doRequestInfoSuccess(data) {
-    return {
-        type: GET_MOVIE_INFO_SUCCESS,
-        data
-    }
+function requestAction(type, data, isMore) {
+  return {
+    type,
+    data,
+    isMore
+  }
 }
 
 let pageStart = 0;
@@ -49,10 +31,10 @@ export function getMovieList({ tag, more }) {
                 page_limit: pageLimit
             }
         }, (data) => {
-            return dispatch(doRequestListSuccess(data, more));
+            return dispatch(requestAction(GET_MOVIE_LIST_SUCCESS, data, more));
         });
     
-        return dispatch(doRequestList(more));
+        return dispatch(requestAction(GET_MOVIE_LIST, null, more));
     }
 };
 
@@ -62,10 +44,23 @@ export function getMovieInfo(params) {
             type: 'movieInfo',
             params
         }, (data) => {
-            console.log('getMovieInfo', data);
-            return dispatch(doRequestInfoSuccess(data));
+            return dispatch(requestAction(GET_MOVIE_INFO_SUCCESS, data))
         });
     
-        return dispatch(doRequestInfo());
+        return dispatch(requestAction(GET_MOVIE_INFO))
     }
 };
+
+export function searchMovie(params) {
+  return dispatch => {
+      getCloudApi('douban', {
+          type: 'movieSearch',
+          params
+      }, (data) => {
+          console.log('movieSearch', data);
+          return dispatch(requestAction(SEARCH_MOVIE_SUCCESS, data))
+      });
+
+      return dispatch(requestAction(SEARCH_MOVIE));
+  }
+}

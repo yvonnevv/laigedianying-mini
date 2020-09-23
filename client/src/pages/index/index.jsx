@@ -7,7 +7,7 @@ import MovieList from '../../components/MovieList'
 
 import './index.less'
 
-const LOGO_IMG = require('./images/logo.png')
+const LOGO_IMG = require('../../assets/images/logo.png')
 
 class Index extends Component {
 
@@ -52,7 +52,7 @@ class Index extends Component {
           />
           <Icon className="home-search__main-icon" type="search" size="14" />
         </View>
-        { LOGO_IMG && <Image className="home-search__logo" src="./images/logo.png" />}
+        { LOGO_IMG && <Image className="home-search__logo" src="../../assets/images/logo.png" />}
       </View>
     )
   }
@@ -88,7 +88,7 @@ class Index extends Component {
         scrollY
         scrollWithAnimation
         lowerThreshold={100}
-        onScrollToLower={this.onScrollToLower.bind(this)} // 使用箭头函数的时候 可以这样写 `onScrollToUpper={this.onScrollToUpper}`
+        onScrollToLower={this.onScrollToLower.bind(this)}
         enableFlex={true}
       >
         {this.renderInput()}

@@ -3,13 +3,15 @@ export default {
     'pages/index/index',
     'pages/recommend/index',
     'pages/me/index',
-    'pages/detail/index'
+    'pages/detail/index',
+    'pages/search/index'
   ],
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
     navigationBarTitleText: 'WeChat',
-    navigationBarTextStyle: 'black'
+    navigationBarTextStyle: 'black',
+    // navigationStyle: 'custom'
   },
   cloud: true,
   tabBar: {
