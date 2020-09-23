@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Taro from '@tarojs/taro'
 import { connect } from 'react-redux'
 import { View, Input, Text, Icon, Image, ScrollView } from '@tarojs/components'
 import { getMovieList } from '../../actions'
@@ -16,6 +17,11 @@ class Index extends Component {
   }
 
   componentWillMount() {
+    Taro.showToast({
+      title: '加载中',
+      icon: 'loading',
+      duration: 4000
+    })
     this.fetchData();
   }
 
@@ -25,6 +31,12 @@ class Index extends Component {
       activeIdx: idx
     })
     this.fetchData({ tag: idx })
+  }
+
+  toSearchPage() {
+    Taro.navigateTo({
+      url: '/pages/search/index'
+    })
   }
 
   onScrollToLower() {
@@ -49,6 +61,7 @@ class Index extends Component {
             className="home-search__main-input"
             placeholder="输入片名搜索"
             placeholderClass="home-search__main-placeholder"
+            onClick={this.toSearchPage}
           />
           <Icon className="home-search__main-icon" type="search" size="14" />
         </View>
@@ -87,7 +100,7 @@ class Index extends Component {
         className='home'
         scrollY
         scrollWithAnimation
-        lowerThreshold={100}
+        lowerThreshold={200}
         onScrollToLower={this.onScrollToLower.bind(this)}
         enableFlex={true}
       >

@@ -59,6 +59,12 @@
 					"pathName": "pages/detail/index",
 					"query": "id=30384019&title=死无对证",
 					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/search/index",
+					"pathName": "pages/search/index",
+					"scene": null
 				}
 			]
 		}

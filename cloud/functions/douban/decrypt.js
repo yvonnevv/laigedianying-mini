@@ -1568,7 +1568,6 @@ function decrypt(r){
     var l = {}
     l[c_data] = a
     var data = n_n((l = {},l[c_data] = a,l))
-    console.log(data)
     return data
 }
 

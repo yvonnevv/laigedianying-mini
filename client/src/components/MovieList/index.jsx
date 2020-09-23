@@ -16,13 +16,17 @@ class MovieList extends Component {
     renderList() {
         const { movieList, tag } = this.props;
         const { loaded, list } = movieList;
-        const mapList = tag ? list.highscore : list.hot;
+        const mapList = tag
+            ? (tag === 1
+                ? list.highscore
+                : list.search
+            ) : list.hot;
 
         if (!loaded && !mapList.length) return null;
-        
+
         return mapList.map((item, key) => (
-            <View 
-                className="scrollview-item" 
+            <View
+                className="scrollview-item"
                 key={`scrollview-item-${key}`}
                 onClick={this.toDetail.bind(this, item.id, item.title)}
             >

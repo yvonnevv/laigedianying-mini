@@ -10,11 +10,11 @@ export const SEARCH_MOVIE_SUCCESS = 'SEARCH_MOVIE_SUCCESS';
 import { getCloudApi } from './utils';
 
 function requestAction(type, data, isMore) {
-  return {
-    type,
-    data,
-    isMore
-  }
+    return {
+        type,
+        data,
+        isMore
+    }
 }
 
 let pageStart = 0;
@@ -33,7 +33,7 @@ export function getMovieList({ tag, more }) {
         }, (data) => {
             return dispatch(requestAction(GET_MOVIE_LIST_SUCCESS, data, more));
         });
-    
+
         return dispatch(requestAction(GET_MOVIE_LIST, null, more));
     }
 };
@@ -46,21 +46,21 @@ export function getMovieInfo(params) {
         }, (data) => {
             return dispatch(requestAction(GET_MOVIE_INFO_SUCCESS, data))
         });
-    
+
         return dispatch(requestAction(GET_MOVIE_INFO))
     }
 };
 
-export function searchMovie(params) {
-  return dispatch => {
-      getCloudApi('douban', {
-          type: 'movieSearch',
-          params
-      }, (data) => {
-          console.log('movieSearch', data);
-          return dispatch(requestAction(SEARCH_MOVIE_SUCCESS, data))
-      });
+export function searchMovie(params, callback) {
+    return dispatch => {
+        getCloudApi('douban', {
+            type: 'movieSearch',
+            params
+        }, (data) => {
+            callback && callback()
+            return dispatch(requestAction(SEARCH_MOVIE_SUCCESS, data))
+        });
 
-      return dispatch(requestAction(SEARCH_MOVIE));
-  }
+        return dispatch(requestAction(SEARCH_MOVIE));
+    }
 }

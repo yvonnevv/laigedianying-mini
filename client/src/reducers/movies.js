@@ -1,14 +1,17 @@
 import {
     GET_MOVIE_LIST,
     GET_MOVIE_INFO,
+    SEARCH_MOVIE,
     GET_MOVIE_LIST_SUCCESS,
-    GET_MOVIE_INFO_SUCCESS
+    GET_MOVIE_INFO_SUCCESS,
+    SEARCH_MOVIE_SUCCESS
 } from '../actions';
 
 export function movieList(state = {
     list: {
         hot: [],
-        highscore: []
+        highscore: [],
+        search: []
     },
     loaded: false
 }, action) {
@@ -16,6 +19,7 @@ export function movieList(state = {
     let update = {};
     switch (type) {
         case GET_MOVIE_LIST:
+        case SEARCH_MOVIE:
             update = { loaded: false };
             break;
         case GET_MOVIE_LIST_SUCCESS: {
@@ -34,6 +38,21 @@ export function movieList(state = {
             }
             break;
         }  
+        case SEARCH_MOVIE_SUCCESS: {
+            const { data } = action;
+            const search = (data.items || []).map(item => {
+                return {
+                    rate: item.rating.value,
+                    title: item.title,
+                    cover: item.cover_url,
+                    id: `${item.id}`,
+                }
+            })
+            update = {
+                loaded: true,
+                list: { search }
+            }
+        }
         default:
             break;
     }

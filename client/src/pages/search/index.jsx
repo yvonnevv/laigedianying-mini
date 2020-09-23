@@ -1,26 +1,64 @@
 import React, { Component } from 'react'
-import Taro from '@tarojs/taro'
-import { View, Text } from '@tarojs/components'
+import { connect } from 'react-redux'
+import { View, ScrollView, Input, Icon, Image } from '@tarojs/components'
+import { searchMovie } from '../../actions'
+
+import MovieList from '../../components/MovieList'
+
 import './index.less'
 
 const LOGO_IMG = require('../../assets/images/logo.png')
 
-export default class Search extends Component {
+class Search extends Component {
+
+  state = {
+    inputVal: ''
+  }
 
   componentWillMount () { }
 
+  onSearchConfirm({ detail }) {
+    const { value: name } = detail
+    console.log('name', name)
+    this.props.searchMovie(name, () => {
+      this.setState({
+        inputVal: ''
+      })
+    })
+  }
+
+  onChange({ detail }) {
+    if (this.state.inputVal === detail.value) return;
+
+    this.setState({
+      inputVal: detail.value
+    });
+  }
+
+  renderScroll() {
+    return (
+      <View className="search-list">
+        <MovieList tag={2} />
+      </View>
+    )
+  }
+
   renderInput() {
     return (
-      <View className="home-search">
-        <View className="home-search__main">
+      <View className="search-input">
+        <View className="search-input__main">
           <Input
-            className="home-search__main-input"
+            className="search-input__main-input"
             placeholder="输入片名搜索"
-            placeholderClass="home-search__main-placeholder"
+            placeholderClass="search-input__main-placeholder"
+            type="search"
+            value={this.state.inputVal}
+            onConfirm={this.onSearchConfirm.bind(this)}
+            onChange={this.onChange.bind(this)}
           />
-          <Icon className="home-search__main-icon" type="search" size="14" />
+          <Icon className="search-input__main-icon" type="search" size="14" />
         </View>
-        { LOGO_IMG && <Image className="home-search__logo" src="../../assets/images/logo.png" />}
+        { LOGO_IMG && <Image className="search-input__logo" src="../../assets/images/logo.png" />}
       </View>
     )
   }
@@ -31,7 +69,6 @@ export default class Search extends Component {
         className='search'
         scrollY
         scrollWithAnimation
-        // onScrollToLower={this.onScrollToLower.bind(this)}
         enableFlex={true}
       >
         {this.renderInput()}
@@ -40,3 +77,14 @@ export default class Search extends Component {
     )
   }
 }
+
+export default connect(
+  () => {},
+  dispatch => {
+    return {
+      searchMovie(name, callback) {
+        return dispatch(searchMovie({ name }, callback))
+      }
+    }
+  }
+)(Search)
