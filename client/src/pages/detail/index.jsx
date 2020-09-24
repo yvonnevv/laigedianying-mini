@@ -16,6 +16,7 @@ class Detail extends Component {
       const { id } = params;
       this.props.fetchMovieInfo({ id });
       this.statusHeight = Taro.getSystemInfoSync().statusBarHeight;
+      console.log(this.statusHeight);
   }
 
   backToPre () {
@@ -56,14 +57,18 @@ class Detail extends Component {
 
       return (
           <View className='detail'>
-              <View className='detail-bg'>
+              <View className='detail-bg' style={{height: this.statusHeight + 260}}>
                   <View className='detail-bg__pic'>
                       <Image src={poster} mode='widthFix' />
                   </View>
                   <View className='detail-bg__circle' />
               </View>
-              <View className='detail-back' onClick={this.backToPre} style={{top: this.statusHeight + 8}}></View>
-              <View className='detail-main'>
+              <View
+                  className='detail-back'
+                  onClick={this.backToPre}
+                  style={{top: this.statusHeight + 8}}
+              />
+              <View className='detail-main' style={{top: this.statusHeight - 20}}>
                   <View className='detail-pic'>
                       <Image src={cover} />
                   </View>

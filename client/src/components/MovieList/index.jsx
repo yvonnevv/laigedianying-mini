@@ -13,17 +13,7 @@ class MovieList extends Component {
         });
     }
 
-    renderList () {
-        const { movieList, tag } = this.props;
-        const { list } = movieList;
-        const mapList = tag
-            ? (tag === 1
-                ? list.highscore
-                : list.search
-            ) : list.hot;
-
-        if (!mapList || !mapList.length) return null;
-
+    renderList (mapList) {
         return mapList.map((item, key) => (
             <View
                 className='scrollview-item'
@@ -39,11 +29,23 @@ class MovieList extends Component {
     }
 
     render () {
+        const { movieList, tag } = this.props;
+        const { list, loaded } = movieList;
+        const mapList = tag
+            ? (tag === 1
+                ? list.highscore
+                : list.search
+            ) : list.hot;
+
+        if (!mapList || !mapList.length) return null;
+        const isShowLoading = !loaded && mapList.length;
+
         return (
             <View>
                 <View className='scrollview-main'>
-                    {this.renderList()}
+                    {this.renderList(mapList)}
                 </View>
+                {isShowLoading && <View className='scrollview-loading'></View> }
             </View>
         );
     }

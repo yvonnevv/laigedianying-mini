@@ -1,0 +1,93 @@
+
+.me {
+    font-size: 25px;
+
+    &-avatar {
+        width: 190px;
+        height: 190px;
+        margin: 80px auto 20px;
+        border-radius: 50%;
+        overflow: hidden;
+        // border: 6px solid #FF505B;
+
+        image {
+            width: 100%;
+            height: 100%;
+        }
+
+        &__default {
+            background: #e5e5e5;
+            color: #ffffff;
+            font-size: 60px;
+            text-align: center;
+            line-height: 190px;
+        }
+    }
+
+    &-nick {
+        text-align: center;
+        font-weight: bold;
+        font-size: 30px;
+        color: #666666;
+        margin-bottom: 50px;
+    }
+
+    &-oper {
+        margin: 0 68px;
+
+        &__item {
+            display: flex;
+            line-height: 94px;
+            color: #666666;
+            border-bottom: 1px solid #dddddd;
+
+            .right {
+                margin-left: auto;
+                position: relative;
+                left: -10px;
+
+                text { font-size: 30px; font-weight: bold;}
+            }
+
+            .icon-help,
+            .icon-coin,
+            .icon-more {
+                width: 28px;
+                height: 28px;
+                background-size: 100% 100%;
+                margin-right: 18px;
+                position: relative;
+                top: 2px;
+            }
+
+            .icon-help {
+                background-image: url('../../assets/images/icon-help.png');
+            }
+            .icon-coin {
+                background-image: url('../../assets/images/icon-coin.png');
+            }
+            .icon-more {
+                width: 34px;
+                height: 34px;
+                background-image: url('../../assets/images/icon-more.png');
+                top: 8px;
+                left: 15px;
+            }
+        }
+
+        button {
+            background-color: #FF505B;
+            width: 75%;
+            height: 80px;
+            line-height: 80px;
+            border: none;
+            font-size: 34px; 
+
+            &.button-hover {
+                background-color: #ec4954 !important;
+                
+            }
+                
+        }
+    }
+}

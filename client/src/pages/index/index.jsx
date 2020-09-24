@@ -15,12 +15,12 @@ class Index extends Component {
     constructor () {
         super();
         this.state = {
-            activeIdx: 1
+            activeIdx: 0
         };
     }
 
     componentWillMount () {
-        this.fetchData(); 
+        this.fetchData();
     }
 
     switchMovieTab (idx) {
@@ -93,6 +93,7 @@ class Index extends Component {
     }
 
     render () {
+        console.log('RENDER');
         return (
             <ScrollView
                 className='home'

@@ -50,7 +50,7 @@ export function movieList (state = {
         });
         update = {
             loaded: true,
-            list: { search }
+            list: Object.assign(state.list, { search })
         };
         break;
     }
