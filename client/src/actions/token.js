@@ -1,21 +1,21 @@
+import { getCloudApi } from './utils';
+
 export const GET_TOKEN = 'GET_TOKEN';
 export const GET_TOKEN_SUCCESS = 'GET_TOKEN_SUCCESS';
 
-import { getCloudApi } from './utils';
-
-function doRequest() {
+function doRequest () {
     return {
         type: GET_TOKEN
-    }
+    };
 }
 
-function doRequestSuccess() {
+function doRequestSuccess () {
     return {
         type: GET_TOKEN_SUCCESS
-    }
+    };
 }
 
-export function getToken(callback) {
+export function getToken (callback) {
     return dispatch => {
         getCloudApi('wechat', {
             type: 'wxtoken'
@@ -23,7 +23,7 @@ export function getToken(callback) {
             callback && callback(res);
             return dispatch(doRequestSuccess());
         });
-    
+
         return dispatch(doRequest());
-    }
-};
+    };
+}

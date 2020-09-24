@@ -1,6 +1,7 @@
 const request = require('async-request');
 const superagent = require('superagent');
 const cheerio = require('cheerio');
+const { getQuote } = require('./quote');
 
 const {
     DOUBAN
@@ -124,8 +125,6 @@ async function searchMovie({
             payload: {}
         };
 
-        console.log('playload', data);
-
         return {
             retcode: 0,
             result: data.payload
@@ -149,6 +148,8 @@ exports.main = async ({
             return await getMovieInfo(params);
         case 'movieSearch':
             return await searchMovie(params);
+        case 'movieQuote':
+            return await getQuote(params);
         default:
             return;
     }

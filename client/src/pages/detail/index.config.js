@@ -1,5 +1,5 @@
 export default {
-  navigationBarTitleText: '云开发 QuickStart',
-  navigationStyle: 'custom',
-  navigationBarTextStyle: 'white',
-}
+    navigationBarTitleText: '来个电影 Detail',
+    navigationStyle: 'custom',
+    navigationBarTextStyle: 'white',
+};

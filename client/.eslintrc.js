@@ -8,19 +8,19 @@ module.exports = {
     ecmaVersion: 7,
     sourceType: 'module',
     ecmaFeatures: {
-      jsx: true,
+      jsx: true, 
     },
   },
-  extends: ['eslint:recommended', 'taro'],
+  extends: ['eslint:recommended', 'taro'], 
   globals: {
     __inline: true,
     IS_SERVER: true,
-    __uri: true,
+    __uri: true, 
   },
   rules: {
     indent: [
       'error',
-      2,
+      4,
     ],
     'linebreak-style': [
       'error',
@@ -34,8 +34,10 @@ module.exports = {
       'error',
       'always',
     ],
+    'react/jsx-indent-props': ['error', 4],
     'react/jsx-no-bind': 'off',
     'space-before-function-paren': 'error',
-    'no-mixed-operators': 'error'
+    'no-mixed-operators': 'error',
+    'no-trailing-spaces': 'error'
   },
 };

@@ -1,27 +1,26 @@
-import React, { Component } from 'react'
-import Taro from '@tarojs/taro'
-import { View, Text } from '@tarojs/components'
-import './index.less'
+import React, { Component } from 'react';
+import { View } from '@tarojs/components';
+import './index.less';
 
-import Login from '../../components/login/index'
+import Login from '../../components/login/index';
 
 export default class Index extends Component {
 
-  componentWillMount () { }
+    componentWillMount () { }
 
-  componentDidMount () { }
+    componentDidMount () { }
 
-  componentWillUnmount () { }
+    componentWillUnmount () { }
 
-  componentDidShow () { }
+    componentDidShow () { }
 
-  componentDidHide () { }
+    componentDidHide () { }
 
-  render () {
-    return (
-      <View className='index'>
-        <Login/>
-      </View>
-    )
-  }
+    render () {
+        return (
+            <View className='index'>
+                <Login />
+            </View>
+        );
+    }
 }
