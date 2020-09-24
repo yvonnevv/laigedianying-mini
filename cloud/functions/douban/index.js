@@ -121,14 +121,14 @@ async function searchMovie({
         const docs = await superagent.get(uri);
         const decryptCtn = /window.__DATA__ = "([^"]+)"/.exec(docs.text);
         const data = decrypt(decryptCtn[1]) || {
-            playload: {}
+            payload: {}
         };
+
+        console.log('playload', data);
 
         return {
             retcode: 0,
-            result: {
-                ...data.playload
-            }
+            result: data.payload
         }
     } catch (error) {
         return {
