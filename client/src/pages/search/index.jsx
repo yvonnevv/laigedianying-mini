@@ -1,90 +1,112 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { View, ScrollView, Input, Icon, Image } from '@tarojs/components'
-import { searchMovie } from '../../actions'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { View, ScrollView, Input, Icon, Image, Text } from '@tarojs/components';
+import { searchMovie, } from '../../actions';
+import quotes from './quote';
 
-import MovieList from '../../components/MovieList'
+import MovieList from '../../components/MovieList';
 
-import './index.less'
+import './index.less';
 
-const LOGO_IMG = require('../../assets/images/logo.png')
+import LOGO_IMG from '../../assets/images/logo.png';
 
 class Search extends Component {
+    constructor () {
+        super();
+        this.state = {
+            inputVal: '',
+            isEmptyAll: true
+        };
+    }
 
-  state = {
-    inputVal: ''
-  }
+    getQuote () {
+        const num = Math.floor(Math.random() * quotes.length);
+        return quotes[num];
+    }
 
-  componentWillMount () { }
+    onSearchConfirm ({ detail }) {
+        const { value: name } = detail;
 
-  onSearchConfirm({ detail }) {
-    const { value: name } = detail
-    console.log('name', name)
-    this.props.searchMovie(name, () => {
-      this.setState({
-        inputVal: ''
-      })
-    })
-  }
+        this.props.searchMovie(name, () => {
+            this.setState({
+                inputVal: '',
+                isEmptyAll: false
+            });
+        });
+    }
 
-  onChange({ detail }) {
-    if (this.state.inputVal === detail.value) return;
+    onChange ({ detail }) {
+        if (this.state.inputVal === detail.value) return;
+        if (!detail.value) {
+            this.setState({
+                isEmptyAll: true
+            });
+        }
+        this.setState({
+            inputVal: detail.value
+        });
+    }
 
-    this.setState({
-      inputVal: detail.value
-    });
-  }
+    renderScroll () {
+        return (
+            <View className='search-list'>
+                <MovieList tag={2} />
+            </View>
+        );
+    }
 
-  renderScroll() {
-    return (
-      <View className="search-list">
-        <MovieList tag={2} />
-      </View>
-    )
-  }
+    renderInput () {
+        return (
+            <View className='search-input'>
+                <View className='search-input__main'>
+                    <Input
+                        className='search-input__main-input'
+                        placeholder='输入片名搜索'
+                        placeholderClass='search-input__main-placeholder'
+                        type='search'
+                        value={this.state.inputVal}
+                        onConfirm={this.onSearchConfirm.bind(this)}
+                        onChange={this.onChange.bind(this)}
+                    />
+                    <Icon className='search-input__main-icon' type='search' size='14' />
+                </View>
+                {LOGO_IMG && <Image className='search-input__logo' src='../../assets/images/logo.png' />}
+            </View>
+        );
+    }
 
-  renderInput() {
-    return (
-      <View className="search-input">
-        <View className="search-input__main">
-          <Input
-            className="search-input__main-input"
-            placeholder="输入片名搜索"
-            placeholderClass="search-input__main-placeholder"
-            type="search"
-            value={this.state.inputVal}
-            onConfirm={this.onSearchConfirm.bind(this)}
-            onChange={this.onChange.bind(this)}
-          />
-          <Icon className="search-input__main-icon" type="search" size="14" />
-        </View>
-        { LOGO_IMG && <Image className="search-input__logo" src="../../assets/images/logo.png" />}
-      </View>
-    )
-  }
+    renderEmpty () {
+        const quote = this.getQuote();
+        return (
+            <View className='search-quote'>
+                <View className='search-quote__icon first'></View>
+                <View className='search-quote__text'>
+                    <View className='content'>{quote.content}</View>
+                    <View className='from'><Text>《{quote.from}》</Text></View>
+                </View>
+                <View className='search-quote__icon last'></View>
+            </View>
+        );
+    }
 
-  render () {
-    return (
-      <ScrollView
-        className='search'
-        scrollY
-        scrollWithAnimation
-        enableFlex={true}
-      >
-        {this.renderInput()}
-        {this.renderScroll()}
-      </ScrollView>
-    )
-  }
+    render () {
+        const { isEmptyAll } = this.state;
+        return (
+            <ScrollView className='search' scrollY scrollWithAnimation enableFlex>
+                {this.renderInput()}
+                {isEmptyAll ? this.renderEmpty() : this.renderScroll()}
+            </ScrollView>
+        );
+    }
 }
 
 export default connect(
-  () => {},
-  dispatch => {
-    return {
-      searchMovie(name, callback) {
-        return dispatch(searchMovie({ name }, callback))
-      }
+    () => {},
+    (dispatch) => {
+        return {
+            searchMovie (name, callback) {
+                return dispatch(searchMovie({ name }, callback));
+            }
+        };
     }
-  }
-)(Search)
+)(Search);

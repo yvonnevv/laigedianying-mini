@@ -1,3 +1,6 @@
+import Taro from '@tarojs/taro';
+import { getCloudApi } from './utils';
+
 export const GET_MOVIE_LIST = 'GET_MOVIE_LIST';
 export const GET_MOVIE_LIST_SUCCESS = 'GET_MOVIE_LIST_SUCCESS';
 
@@ -7,20 +10,31 @@ export const GET_MOVIE_INFO_SUCCESS = 'GET_MOVIE_INFO_SUCCESS';
 export const SEARCH_MOVIE = 'SEARCH_MOVIE';
 export const SEARCH_MOVIE_SUCCESS = 'SEARCH_MOVIE_SUCCESS';
 
-import { getCloudApi } from './utils';
-
-function requestAction(type, data, isMore) {
+function requestAction (type, data, isMore) {
     return {
         type,
         data,
         isMore
-    }
+    };
 }
 
 let pageStart = 0;
 let pageLimit = 10;
 
-export function getMovieList({ tag, more }) {
+function handleToast (isHide) {
+    if (isHide) {
+        Taro.hideToast();
+        return;
+    }
+    Taro.showToast({
+        title: '加载中',
+        icon: 'loading',
+        duration: 5000
+    });
+}
+
+export function getMovieList ({ tag, more }) {
+    if (!more) handleToast();
     return dispatch => {
         pageStart = more ? pageStart + 10 : 0;
         getCloudApi('douban', {
@@ -31,36 +45,41 @@ export function getMovieList({ tag, more }) {
                 page_limit: pageLimit
             }
         }, (data) => {
+            if (!more) handleToast(true);
             return dispatch(requestAction(GET_MOVIE_LIST_SUCCESS, data, more));
         });
 
         return dispatch(requestAction(GET_MOVIE_LIST, null, more));
-    }
-};
+    };
+}
 
-export function getMovieInfo(params) {
+export function getMovieInfo (params) {
+    handleToast();
     return dispatch => {
         getCloudApi('douban', {
             type: 'movieInfo',
             params
         }, (data) => {
-            return dispatch(requestAction(GET_MOVIE_INFO_SUCCESS, data))
+            handleToast(true);
+            return dispatch(requestAction(GET_MOVIE_INFO_SUCCESS, data));
         });
 
-        return dispatch(requestAction(GET_MOVIE_INFO))
-    }
-};
+        return dispatch(requestAction(GET_MOVIE_INFO));
+    };
+}
 
-export function searchMovie(params, callback) {
+export function searchMovie (params, callback) {
+    handleToast();
     return dispatch => {
         getCloudApi('douban', {
             type: 'movieSearch',
             params
         }, (data) => {
-            callback && callback()
-            return dispatch(requestAction(SEARCH_MOVIE_SUCCESS, data))
+            callback && callback();
+            handleToast(true);
+            return dispatch(requestAction(SEARCH_MOVIE_SUCCESS, data));
         });
 
         return dispatch(requestAction(SEARCH_MOVIE));
-    }
+    };
 }

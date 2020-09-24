@@ -1,33 +1,34 @@
-import React, { Component } from 'react'
-import Taro from '@tarojs/taro'
-import { Provider } from 'react-redux'
+import React, { Component } from 'react';
+import { Provider } from 'react-redux';
+import Taro from '@tarojs/taro';
 
-import configStore from './store'
-const store = configStore()
+import configStore from './store';
 
-import './app.less'
+import './app.less';
+
+const store = configStore();
 
 class App extends Component {
 
-  componentWillMount() {
-    if (process.env.TARO_ENV === 'weapp') {
-      Taro.cloud.init()
+    componentWillMount () {
+        if (process.env.TARO_ENV === 'weapp') {
+            Taro.cloud.init();
+        }
     }
-  }
 
-  componentDidShow() { }
+    componentDidShow () { }
 
-  componentDidHide() { }
+    componentDidHide () { }
 
-  componentDidCatchError() { }
+    componentDidCatchError () { }
 
-  render() {
-    return (
-      <Provider store={store}>
-        {this.props.children}
-      </Provider>
-    )
-  }
+    render () {
+        return (
+            <Provider store={store}>
+                {this.props.children}
+            </Provider>
+        );
+    }
 }
 
-export default App
+export default App;

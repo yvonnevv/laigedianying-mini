@@ -1,17 +1,17 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import Taro from '@tarojs/taro'
-import { View, Text, Swiper, SwiperItem, Image } from '@tarojs/components'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import Taro from '@tarojs/taro';
+import { View, Text, Swiper, SwiperItem, Image, Button } from '@tarojs/components';
 import { getArticles, getToken } from '../../actions';
 
-import './index.less'
+import './index.less';
 
 class ArticleSwiper extends Component {
     state = {
         current: 0
     }
 
-    componentWillMount() {
+    componentWillMount () {
         const { fetchArticle } = this.props;
         this.init().then(token => {
             fetchArticle({ token });
@@ -20,7 +20,7 @@ class ArticleSwiper extends Component {
         // this.props.dispatch(getArticles());
     }
 
-    init() {
+    init () {
         // 获取token
         const weappToken = Taro.getStorageSync('weapp_token');
         const isExpires = weappToken && (weappToken.expires <= Date.now());
@@ -31,7 +31,7 @@ class ArticleSwiper extends Component {
                 fetchToken(res => {
                     console.log('tokenres', res);
                     const { access_token, expires_in } = res;
-                    const expires = Date.now() + expires_in * 1000;
+                    const expires = Date.now() + (expires_in * 1000);
 
                     resolve(access_token);
 
@@ -58,7 +58,7 @@ class ArticleSwiper extends Component {
         });
     }
 
-    renderArticles() {
+    renderArticles () {
         const { current } = this.state;
         const { articles } = this.props;
         const { info, loaded } = articles;
@@ -75,56 +75,44 @@ class ArticleSwiper extends Component {
         ));
 
         const dots = mapInfos.map((item, key) => (
-            <View
-                className={
-                    key === current
-                        ? 'home-articles__item-dot active'
-                        : 'home-articles__item-dot'
-                }
-                key={`swiper_dot_${key}`}
-            />
+            <View lassName={key === current ? 'home-articles__item-dot active' : 'home-articles__item-dot'} key={`swiper_dot_${key}`} />
         ));
 
         return (
             <View className='home-articles'>
-                <Swiper
-                    className='home-articles__swiper'
-                    onChange={this.swiperChage}
-                    circular
-                    autoplay
-                >
+                <Swiper className='home-articles__swiper' onChange={this.swiperChage} circular autoplay>
                     {
                         swipers
                     }
                 </Swiper>
-                <View className="home-articles__item-dots">
+                <View className='home-articles__item-dots'>
                     {dots}
                 </View>
             </View>
-        )
+        );
     }
 
-    render() {
+    render () {
         return (
             <View className='index'>
                 <Button onClick={this.getLogin}>获取登录云函数</Button>
                 <Text>context：{JSON.stringify(this.state.context)}</Text>
             </View>
-        )
+        );
     }
 }
 
 
 export default connect(
-    ({ articles }) => { return { articles } },
+    ({ articles }) => { return { articles }; },
     dispatch => {
         return {
-            fetchToken(callback) {
+            fetchToken (callback) {
                 return dispatch(getToken(callback));
             },
-            fetchArticle(params) {
+            fetchArticle (params) {
                 return dispatch(getArticles(params));
             }
-        }
+        };
     }
 )(ArticleSwiper);

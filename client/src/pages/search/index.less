@@ -1,4 +1,37 @@
 .search {
+    &-quote {
+      width: 500px;
+      margin: 100px auto;
+      position: relative;
+      // overflow: hidden;
+
+      &__icon {
+        position: absolute;
+        width: 16px;
+        height: 10px;
+        background: url('../../assets/images/icon-quote-red.png');
+        background-size: 100% 100%;
+        &.first {
+          top: -20px;
+          left: -20px;
+        }
+        &.last {
+          bottom: -20px;
+          right: -20px;
+        }
+      }
+      font-size: 24px;
+      color: #9a979b;
+      
+      .from {
+        margin-top: 20px;
+        display: flex;
+
+        text {
+          margin-left: auto;
+        }
+      }
+    }
     &-input {
         margin: 25px 27px;
         display: flex;

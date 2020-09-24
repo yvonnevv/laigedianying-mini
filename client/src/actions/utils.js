@@ -1,6 +1,6 @@
 import Taro from '@tarojs/taro';
 
-export function getCloudApi(name, data, callback) {
+export function getCloudApi (name, data, callback) {
     console.log('data:', data);
     return Taro.cloud.callFunction({
         name,

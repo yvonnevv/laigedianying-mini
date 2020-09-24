@@ -1,3 +1,3 @@
 export default {
-  navigationBarTitleText: '热门推文'
-}
+    navigationBarTitleText: '热门推文'
+};

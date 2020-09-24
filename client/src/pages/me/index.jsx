@@ -1,27 +1,47 @@
-import React, { Component } from 'react'
-import Taro from '@tarojs/taro'
-import { View, Text } from '@tarojs/components'
-import './index.less'
+import React, { Component } from 'react';
+import Taro from '@tarojs/taro';
+import { View, Text, Icon, Button } from '@tarojs/components';
+import './index.less';
 
-import Login from '../../components/login/index'
+export default class Me extends Component {
 
-export default class Index extends Component {
+    componentWillMount () {
+        Taro.getSetting({
+            success (res) {
+                if (!res.authSetting['scope.userInfo']) {
+                    console.log('UNAUTH');
+                } else {
+                    Taro.getUserInfo({
+                        success (userinfo) {
+                            console.log('res', userinfo);
+                        }
+                    });
+                }
+            }
+        });
+    }
 
-  componentWillMount () { }
+    getUserInfo (e) {
+        // 拿到用户信息进行下一步处理
+        console.log(e.detail.userInfo);
+    }
 
-  componentDidMount () { }
+    render () {
+        return (
+            <View className='me'>
+                <View></View>
+                <Button className='btn-max-w' plain type='primary' open-type='getUserInfo' bindgetuserinfo='getUserInfo'>登录</Button>
+                <View className='me-oper'>
+                    <View className='me-oper__item'>
+                        <View><Icon className='icon-coin'></Icon><Text>我的金币</Text></View>
+                        {/* <Text>100</Text> */}
+                    </View>
+                    <View className='me-oper__item'>
+                        <View><Icon className='icon-help'></Icon><Text>帮助</Text></View>
+                    </View>
+                </View>
 
-  componentWillUnmount () { }
-
-  componentDidShow () { }
-
-  componentDidHide () { }
-
-  render () {
-    return (
-      <View className='index'>
-        <Login/>
-      </View>
-    )
-  }
+            </View>
+        );
+    }
 }

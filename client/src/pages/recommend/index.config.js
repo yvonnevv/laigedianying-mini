@@ -1,3 +1,3 @@
 export default {
-  navigationBarTitleText: '云开发 QuickStart'
-}
+    navigationBarTitleText: '来个电影 Recommend'
+};
