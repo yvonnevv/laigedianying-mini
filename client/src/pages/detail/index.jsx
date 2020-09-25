@@ -1,120 +1,224 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Taro, { Current } from '@tarojs/taro';
-import { View, Text, Image } from '@tarojs/components';
+import { View, Text, Image, Button } from '@tarojs/components';
 import './index.less';
-import { getMovieInfo } from '../../actions';
+import { getMovieInfo, getShareInfo } from '../../actions';
 
 import ICON_QUOTE from './images/icon-quote.png';
 
 class Detail extends Component {
+    constructor () {
+        super();
+        this.statusHeight = 0;
+        this.state = {
+            siteIdx: 0
+        };
+    }
 
-  statusHeight = 0
+    componentWillMount () {
+        const { params } = Current.router;
+        const { id, title: kw } = params;
+        this.props.fetchMovieInfo({ id });
+        this.props.fetchShareList({ site: 2, kw });
+        this.statusHeight = Taro.getSystemInfoSync().statusBarHeight;
+        console.log(this.statusHeight);
+    }
 
-  componentWillMount () {
-      const { params } = Current.router;
-      const { id } = params;
-      this.props.fetchMovieInfo({ id });
-      this.statusHeight = Taro.getSystemInfoSync().statusBarHeight;
-      console.log(this.statusHeight);
-  }
+    backToPre () {
+        console.log('back to pre page');
+        Taro.navigateBack();
+    }
 
-  backToPre () {
-      console.log('back to pre page');
-      Taro.navigateBack();
-  }
+    switchMovieTab (idx) {
+        if (this.activeIdx === idx) return;
+        this.setState({
+            siteIdx: idx
+        });
+        // this.fetchData({ tag: idx });
+    }
 
-  renderStar (star) {
-      const ten = Math.floor(star / 10);
-      const half = +!!(star % 10);
-      const fullStarArr = new Array(ten).fill(1);
-      const emptyStarArr = new Array(5 - ten - half).fill(1);
+    copyContent () {
+        Taro.setClipboardData({
+            data: 'data',
+            success () {
+                Taro.getClipboardData({
+                    success (res) {
+                        console.log(res.data); // data
+                    }
+                });
+            }
+        });
+    }
 
-      const fullStar = fullStarArr.map((item, key) =>
-          <View className='detail-score__star-item full' key={`star_${key}`}></View>
-      );
-      const emptyStar = emptyStarArr.map((item, key) =>
-          <View className='detail-score__star-item empty' key={`star_${ten+half+key}`}></View>
-      );
+    renderStar (star) {
+        const ten = Math.floor(star / 10);
+        const half = +!!(star % 10);
+        const fullStarArr = new Array(ten).fill(1);
+        const emptyStarArr = new Array(5 - ten - half).fill(1);
 
-      return (
-          <View className='detail-score__star'>
-              {fullStar}
-              { !!half && (<View className='detail-score__star-item half' key={ten+half-1}></View>) }
-              {emptyStar}
-          </View>
-      );
-  }
+        const fullStar = fullStarArr.map((item, key) =>
+            <View className='detail-score__star-item full' key={`star_${key}`}></View>
+        );
+        const emptyStar = emptyStarArr.map((item, key) =>
+            <View className='detail-score__star-item empty' key={`star_${ten+half+key}`}></View>
+        );
 
-  renderMain () {
-      const { movieInfo } = this.props;
-      const { info, loaded } = movieInfo;
-      if (!loaded) return null;
+        return (
+            <View className='detail-score__star'>
+                {fullStar}
+                { !!half && (<View className='detail-score__star-item half' key={ten+half-1}></View>) }
+                {emptyStar}
+            </View>
+        );
+    }
 
-      const { params } = Current.router;
-      const { title } = params;
-      const { cover, extraInfo, summary, score, shortText, poster, star } = info;
+    renderShareList () {
+        return (
+            <View className='detail-share'>
+                <View className='detail-share__item'>
+                    <Text className='detail-share__item-text'>死无对证</Text>
+                    <View className='detail-share__item-btns'>
+                        <Button size='mini'>复制链接</Button>
+                        <Button
+                            onClick={this.copyContent.bind(this)}
+                            className='copy-psw'
+                            size='mini'
+                            // type='primary'
+                        >
+                          复制密码
+                        </Button>
+                    </View>
+                </View>
+                <View className='detail-share__item'>
+                    <Text className='detail-share__item-text'>死无对证死无对证死无对证死无对证死无对证死无对证死无对证死无对证</Text>
+                    <View className='detail-share__item-btns'>
+                        <Button size='mini'>复制链接</Button>
+                        <Button
+                            onClick={this.copyContent.bind(this)}
+                            className='copy-psw'
+                            size='mini'
+                            // type='primary'
+                        >
+                          复制密码
+                        </Button>
+                    </View>
+                </View>
+            </View>
+        );
+    }
 
-      return (
-          <View className='detail'>
-              <View className='detail-bg' style={{height: this.statusHeight + 260}}>
-                  <View className='detail-bg__pic'>
-                      <Image src={poster} mode='widthFix' />
-                  </View>
-                  <View className='detail-bg__circle' />
-              </View>
-              <View
-                  className='detail-back'
-                  onClick={this.backToPre}
-                  style={{top: this.statusHeight + 8}}
-              />
-              <View className='detail-main' style={{top: this.statusHeight - 20}}>
-                  <View className='detail-pic'>
-                      <Image src={cover} />
-                  </View>
-                  <View className='detail-title'>
-                      <Text>{title}</Text>
-                  </View>
-                  <View className='detail-score'>
-                      <View className='detail-score__text'>
-                          <Text className='detail-score__ten'>{score.split('.')[0]}</Text>
-                          <Text>.</Text>
-                          <Text className='detail-score__unit'>{score.split('.')[0]}</Text>
-                      </View>
-                      {this.renderStar(star)}
-                  </View>
-                  <View className='detail-extra'>
-                      <Text>{extraInfo}</Text>
-                  </View>
-                  <View className='detail-comment'>
-                      {ICON_QUOTE && (
-                          <View className='detail-comment__icon'>
-                              <Image src='./images/icon-quote.png' />
-                          </View>
-                      )}
-                      <Text className='detail-comment__text'>{shortText}</Text>
-                  </View>
-                  <View className='detail-summary'>
-                      <Text>{summary}</Text>
-                  </View>
-              </View>
-          </View>
-      );
-  }
+    renderSwitchTab () {
+        const { siteIdx } = this.state;
+        return (
+            <View className='detail-tab'>
+                <View
+                    onClick={this.switchMovieTab.bind(this, 0)}
+                    className={`detail-tab__item ${!siteIdx ? 'active' : ''}`}
+                >
+                    <Text className='detail-tab__text'>站点1</Text>
+                </View>
+                <View
+                    onClick={this.switchMovieTab.bind(this, 1)}
+                    className={`detail-tab__item ${siteIdx === 1 ? 'active' : ''}`}
+                >
+                    <Text className='detail-tab__text'>站点2</Text>
+                </View>
+                <View
+                    onClick={this.switchMovieTab.bind(this, 2)}
+                    className={`detail-tab__item ${siteIdx === 2 ? 'active' : ''}`}
+                >
+                    <Text className='detail-tab__text'>站点3</Text>
+                </View>
+            </View>
+        );
+    }
 
-  render () {
-      return this.renderMain();
-  }
+    renderSiteSwitch () {
+        return (
+            <View className='detail-other'>
+                {this.renderSwitchTab()}
+                <View className='detail-tip'>
+                    👉 获取时请先确保链接有效。可先复制到浏览器查看
+                </View>
+                {this.renderShareList()}
+            </View>
+        );
+    }
+
+    renderMain () {
+        const { movieInfo } = this.props;
+        const { info, loaded } = movieInfo;
+        if (!loaded) return null;
+
+        const { params } = Current.router;
+        const { title } = params;
+        const { cover, extraInfo, summary, score, shortText, poster, star } = info;
+
+        return (
+            <View className='detail'>
+                <View className='detail-bg' style={{height: this.statusHeight + 260}}>
+                    <View className='detail-bg__pic'>
+                        <Image src={poster} mode='widthFix' />
+                    </View>
+                    <View className='detail-bg__circle' />
+                </View>
+                <View
+                    className='detail-back'
+                    onClick={this.backToPre}
+                    style={{top: this.statusHeight + 8}}
+                />
+                <View className='detail-main' style={{top: this.statusHeight - 20}}>
+                    <View className='detail-pic'>
+                        <Image src={cover} />
+                    </View>
+                    <View className='detail-title'>
+                        <Text>{title}</Text>
+                    </View>
+                    <View className='detail-score'>
+                        <View className='detail-score__text'>
+                            <Text className='detail-score__ten'>{score.split('.')[0]}</Text>
+                            <Text>.</Text>
+                            <Text className='detail-score__unit'>{score.split('.')[0]}</Text>
+                        </View>
+                        {this.renderStar(star)}
+                    </View>
+                    <View className='detail-extra'>
+                        <Text>{extraInfo}</Text>
+                    </View>
+                    <View className='detail-comment'>
+                        {ICON_QUOTE && (
+                            <View className='detail-comment__icon'>
+                                <Image src='./images/icon-quote.png' />
+                            </View>
+                        )}
+                        <Text className='detail-comment__text'>{shortText}</Text>
+                    </View>
+                    <View className='detail-summary'>
+                        <Text>{summary}</Text>
+                    </View>
+                    {this.renderSiteSwitch()}
+                </View>
+            </View>
+        );
+    }
+
+    render () {
+        return this.renderMain();
+    }
 }
 
 export default connect(
-    ({ movieInfo }) => {
-        return { movieInfo };
+    ({ movieInfo, shareList }) => {
+        return { movieInfo, shareList };
     },
     (dispatch) => {
         return {
             fetchMovieInfo (params) {
                 return dispatch(getMovieInfo(params));
+            },
+            fetchShareList (params) {
+                return dispatch(getShareInfo(params));
             }
         };
     }

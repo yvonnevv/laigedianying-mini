@@ -2,9 +2,11 @@
 import { combineReducers } from 'redux';
 import { articles } from './articles';
 import { movieList, movieInfo } from './movies';
+import { shareList } from './share';
 
 export default combineReducers({
     articles,
     movieList,
-    movieInfo
+    movieInfo,
+    shareList
 });
