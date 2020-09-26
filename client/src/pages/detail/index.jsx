@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Taro, { Current } from '@tarojs/taro';
 import { View, Text, Image, Button } from '@tarojs/components';
 import './index.less';
-import { getMovieInfo, getShareInfo } from '../../actions';
+import { getMovieInfo, getShareInfo, clearLastShareList } from '../../actions';
 
 import ICON_QUOTE from './images/icon-quote.png';
 
@@ -19,15 +19,32 @@ class Detail extends Component {
     componentWillMount () {
         const { params } = Current.router;
         const { id, title: kw } = params;
+        const { siteIdx } = this.state;
+
+        // 清空一下store
+        this.props.clearList();
+
+        this.kw = decodeURIComponent(kw);
+        this.kw = decodeURIComponent(this.kw).split(' ')[0];
+        this.title = this.kw;
+        this.kw = this.kw.substring(0, this.kw.length - 1);
+
         this.props.fetchMovieInfo({ id });
-        this.props.fetchShareList({ site: 2, kw });
+        this.props.fetchShareList({ site: siteIdx, kw: this.kw });
+
         this.statusHeight = Taro.getSystemInfoSync().statusBarHeight;
-        console.log(this.statusHeight);
     }
 
     backToPre () {
         console.log('back to pre page');
-        Taro.navigateBack();
+
+        if (Taro.getCurrentPages().length > 1) {
+            Taro.navigateBack();
+        } else {
+            Taro.navigateTo({
+                url: '/pages/search/index'
+            });
+        }
     }
 
     switchMovieTab (idx) {
@@ -35,20 +52,17 @@ class Detail extends Component {
         this.setState({
             siteIdx: idx
         });
-        // this.fetchData({ tag: idx });
+        const { shareList } = this.props;
+        const { loaded, info } = shareList;
+
+        if (!loaded) return;
+        if (info[`site${idx}`].length) return;
+
+        this.props.fetchShareList({ site: idx, kw: this.kw });
     }
 
-    copyContent () {
-        Taro.setClipboardData({
-            data: 'data',
-            success () {
-                Taro.getClipboardData({
-                    success (res) {
-                        console.log(res.data); // data
-                    }
-                });
-            }
-        });
+    copyContent (data) {
+        Taro.setClipboardData({ data });
     }
 
     renderStar (star) {
@@ -74,36 +88,35 @@ class Detail extends Component {
     }
 
     renderShareList () {
+        const { siteIdx } = this.state;
+        const { shareList } = this.props;
+        const { loaded, info } = shareList;
+        const mapShareList = info[`site${siteIdx}`] || [];
+
         return (
             <View className='detail-share'>
-                <View className='detail-share__item'>
-                    <Text className='detail-share__item-text'>死无对证</Text>
-                    <View className='detail-share__item-btns'>
-                        <Button size='mini'>复制链接</Button>
-                        <Button
-                            onClick={this.copyContent.bind(this)}
-                            className='copy-psw'
-                            size='mini'
-                            // type='primary'
-                        >
-                          复制密码
-                        </Button>
-                    </View>
-                </View>
-                <View className='detail-share__item'>
-                    <Text className='detail-share__item-text'>死无对证死无对证死无对证死无对证死无对证死无对证死无对证死无对证</Text>
-                    <View className='detail-share__item-btns'>
-                        <Button size='mini'>复制链接</Button>
-                        <Button
-                            onClick={this.copyContent.bind(this)}
-                            className='copy-psw'
-                            size='mini'
-                            // type='primary'
-                        >
-                          复制密码
-                        </Button>
-                    </View>
-                </View>
+                { !loaded && <View className='detail-share__loading'></View> }
+                { loaded && !mapShareList.length && <View className='detail-share__empty'>暂无资源😢</View> }
+                {
+                    loaded && mapShareList.map((item, key) => (
+                        <View key={`share_${key}`} className='detail-share__item'>
+                            <Text className='detail-share__item-text'>{item.name}</Text>
+                            <Button
+                                size='mini'
+                                onClick={this.copyContent.bind(this, item.shareUrl)}
+                            >
+                                复制链接
+                            </Button>
+                            <Button
+                                onClick={this.copyContent.bind(this, item.password)}
+                                className='copy-psw'
+                                size='mini'
+                            >
+                                复制密码
+                            </Button>
+                        </View>
+                    ))
+                }
             </View>
         );
     }
@@ -139,7 +152,7 @@ class Detail extends Component {
             <View className='detail-other'>
                 {this.renderSwitchTab()}
                 <View className='detail-tip'>
-                    👉 获取时请先确保链接有效。可先复制到浏览器查看
+                    👉 点击复制链接到浏览器打开哟！
                 </View>
                 {this.renderShareList()}
             </View>
@@ -151,8 +164,6 @@ class Detail extends Component {
         const { info, loaded } = movieInfo;
         if (!loaded) return null;
 
-        const { params } = Current.router;
-        const { title } = params;
         const { cover, extraInfo, summary, score, shortText, poster, star } = info;
 
         return (
@@ -165,7 +176,7 @@ class Detail extends Component {
                 </View>
                 <View
                     className='detail-back'
-                    onClick={this.backToPre}
+                    onClick={this.backToPre.bind(this)}
                     style={{top: this.statusHeight + 8}}
                 />
                 <View className='detail-main' style={{top: this.statusHeight - 20}}>
@@ -173,13 +184,18 @@ class Detail extends Component {
                         <Image src={cover} />
                     </View>
                     <View className='detail-title'>
-                        <Text>{title}</Text>
+                        <Text>{this.title}</Text>
                     </View>
                     <View className='detail-score'>
                         <View className='detail-score__text'>
-                            <Text className='detail-score__ten'>{score.split('.')[0]}</Text>
-                            <Text>.</Text>
-                            <Text className='detail-score__unit'>{score.split('.')[0]}</Text>
+                            { !score && <View style={{fontSize: 13}}>暂无评分</View> }
+                            {
+                                !!score && <View>
+                                    <Text className='detail-score__ten'>{score.split('.')[0]}</Text>
+                                    <Text>.</Text>
+                                    <Text className='detail-score__unit'>{score.split('.')[1]}</Text>
+                                </View>
+                            }
                         </View>
                         {this.renderStar(star)}
                     </View>
@@ -219,6 +235,9 @@ export default connect(
             },
             fetchShareList (params) {
                 return dispatch(getShareInfo(params));
+            },
+            clearList () {
+                dispatch(clearLastShareList());
             }
         };
     }

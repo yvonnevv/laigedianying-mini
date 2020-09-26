@@ -1,8 +1,5 @@
 const cheerio = require('cheerio');
-const {
-  SITE,
-  UA
-} = require('./config');
+const { SITE, UA, OPEN } = require('./config');
 const userAgent = UA[Math.floor(Math.random() * UA.length)];
 const request = require('async-request');
 
@@ -143,8 +140,9 @@ async function startCrawlAi(keyword) {
     if (isEmpty.length) return shareLinks;
 
     // 判断一下是否为内页 如果article.length为1
-    const searchNode = $('h1:contains("搜索结果：")');
-    if (!searchNode.length) {
+    const searchNode = $('span:contains("微信公众号")');
+
+    if (searchNode.length) {
       const shareNode = $('p:contains("密码：LXXH")');
       const fullName = $('h1.entry-title').text();
       const {
@@ -152,13 +150,15 @@ async function startCrawlAi(keyword) {
         desc
       } = __parseName(fullName);
       shareNode.each((index, share) => {
-        const shareLink = $(share).find('a').attr('href');
+        const shareUrl = $(share).find('a').attr('href');
         shareLinks.push({
-          shareLink,
+          shareUrl,
           name,
-          desc
+          desc,
+          password: 'LXXH'
         });
       });
+
       return shareLinks;
     } else {
       const articles = $('article.post');
@@ -174,6 +174,7 @@ async function startCrawlAi(keyword) {
         const reg = new RegExp(keyword);
         // 要获取实际的shareLink还需进入一层
         // 完全不包含keyword的直接剔除
+        console.log('name', name);
         if (reg.test(name)) urls.push({
           name,
           desc,
@@ -200,14 +201,17 @@ async function startCrawlAi(keyword) {
         const shareNode = $_i('p:contains("密码：LXXH")');
         const shareNodeArr = new Array(shareNode.length).fill(1);
         shareNodeArr.forEach((item, idx) => {
-          const shareLink = shareNode.eq(idx).find('a').attr('href');
+          const shareUrl = shareNode.eq(idx).find('a').attr('href');
           shareLinks.push({
-            shareLink,
+            shareUrl,
             name,
-            desc
+            desc,
+            password: 'LXXH'
           });
         });
       }));
+      console.log('shareLinks', shareLinks);
+
       return shareLinks;
     }
   } catch (error) {
@@ -222,12 +226,14 @@ async function startCrawlAi(keyword) {
 async function startCrawlJieYou(keyword) {
   try {
     const wrapperUrl = `${SITE[2]}${encodeURIComponent(keyword)}`;
+    console.log('wrapperUrl', wrapperUrl);
     const shareLinks = [];
     const docs = await __crawlContent(wrapperUrl);
     // return;
     const $ = cheerio.load(docs);
     // 有无找到
     const isEmpty = $('h1:contains("暂无此资源")');
+    console.log('isEmpty', isEmpty);
     if (isEmpty.length) return shareLinks;
 
     const searchList = $('.search_list li');
@@ -284,6 +290,8 @@ async function startCrawlJieYou(keyword) {
       });
     }));
 
+    console.log('shareLinks', shareLinks);
+
     return shareLinks;
   } catch (error) {
     return `get jieyou error ${error.message}`;
@@ -291,24 +299,26 @@ async function startCrawlJieYou(keyword) {
 
 }
 
-
 exports.main = async ({ site, kw }) => {
+  kw = kw.split('：')[0];
   let shareLinks = [];
-  switch (site) {
-    case 0:
-      shareLinks = await startCrawlLiLi(kw);
-      break;
-    case 0:
-      shareLinks = await startCrawlAi(kw);
-      break;
-    case 0:
-      shareLinks = await startCrawlJieYou(kw);
-      break;
-    default:
-      break;
-  }
+  if (OPEN) {
+    switch (site) {
+      case 0:
+        shareLinks = await startCrawlLiLi(kw);
+        break;
+      case 1:
+        shareLinks = await startCrawlAi(kw);
+        break;
+      case 2:
+        shareLinks = await startCrawlJieYou(kw);
+        break;
+      default:
+        break;
+    }
+  };
 
   return typeof shareLinks === 'string'
-    ? { retcode: 1, errmsg: shareLinks }
-    : { retcode: 0, shareLinks }
+    ? { retcode: 1, result: { errmsg: shareLinks } }
+    : { retcode: 0, result: { shareLinks } }
 }

@@ -16,12 +16,6 @@ class App extends Component {
         }
     }
 
-    componentDidShow () { }
-
-    componentDidHide () { }
-
-    componentDidCatchError () { }
-
     render () {
         return (
             <Provider store={store}>

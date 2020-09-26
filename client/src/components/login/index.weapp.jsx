@@ -34,7 +34,7 @@ export default class Index extends Component {
       return (
           <View className='index'>
               <Button onClick={this.getLogin}>获取登录云函数</Button>
-              <Text>context：{JSON.stringify(this.state.context)}</Text>
+              <Text>context：{JSON.stringify(this.state.context.openid)}</Text>
           </View>
       );
   }

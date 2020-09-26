@@ -9,7 +9,7 @@ class MovieList extends Component {
 
     toDetail (id, title) {
         Taro.navigateTo({
-            url: `../detail/index?id=${id}&title=${title}`
+            url: `../detail/index?id=${id}&title=${encodeURIComponent(title)}`
         });
     }
 

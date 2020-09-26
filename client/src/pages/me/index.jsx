@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Taro from '@tarojs/taro';
 import { View, Text, Icon, Button, Image } from '@tarojs/components';
 
+import { getUserInfo } from '../../actions';
+
 import './index.less';
 
-export default class Me extends Component {
+class Me extends Component {
     constructor () {
         super();
         this.state = {
@@ -15,6 +18,12 @@ export default class Me extends Component {
     }
 
     componentWillMount () {
+        Taro.showToast({
+            title: '登录中',
+            icon: 'loading',
+            duration: 1500
+        });
+
         this.getLoginData();
     }
 
@@ -25,6 +34,10 @@ export default class Me extends Component {
                 nick: rawData.nickName,
                 avatar: rawData.avatarUrl,
                 isLogin: true
+            });
+            // 拉一下金币
+            this.props.fetchUserInfo({
+                nick: rawData.nickName, avatar: rawData.avatarUrl
             });
         }
     }
@@ -52,6 +65,9 @@ export default class Me extends Component {
 
     render () {
         const { isLogin, avatar, nick } = this.state;
+        // console.log('userInfo', this.props.userInfo);
+        const { coin } = this.props;
+
         return (
             <View className='me'>
                 <View className='me-avatar'>
@@ -68,7 +84,7 @@ export default class Me extends Component {
                         <View className='me-oper'>
                             <View className='me-oper__item'>
                                 <View><Icon className='icon-coin'></Icon><Text>我的金币</Text></View>
-                                <View className='right'><Text className='icon-arrow'>100</Text></View>
+                                <View className='right'><Text className='icon-arrow'>{coin}</Text></View>
                             </View>
                             <View className='me-oper__item'>
                                 <View><Icon className='icon-help'></Icon><Text>帮助</Text></View>
@@ -91,3 +107,16 @@ export default class Me extends Component {
         );
     }
 }
+
+export default connect(
+    ({ userInfo }) => {
+        return { coin: userInfo.info.coin };
+    },
+    dispatch => {
+        return {
+            fetchUserInfo (params) {
+                return dispatch(getUserInfo(params));
+            }
+        };
+    }
+)(Me);

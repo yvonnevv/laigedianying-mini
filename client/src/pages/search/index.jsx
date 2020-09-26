@@ -101,7 +101,7 @@ class Search extends Component {
 }
 
 export default connect(
-    () => {},
+    ({ movieList }) => movieList,
     (dispatch) => {
         return {
             searchMovie (name, callback) {
