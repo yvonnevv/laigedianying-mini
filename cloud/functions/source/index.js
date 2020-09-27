@@ -299,6 +299,19 @@ async function startCrawlJieYou(keyword) {
 
 }
 
+/**
+ * 百度云是否已经失效
+ * @param {*} url 
+ */
+async function isValid(url) {
+  const docs = await superagent
+      .get(url)
+  
+  const $ = cheerio.load(docs.text);
+  const inValidNode = $('.share-error-left');
+  return !inValidNode.length;
+}
+
 exports.main = async ({ site, kw }) => {
   kw = kw.split('：')[0];
   let shareLinks = [];
@@ -317,6 +330,11 @@ exports.main = async ({ site, kw }) => {
         break;
     }
   };
+
+  // 有效性检测
+  if (shareLinks instanceof Array && shareLinks.length) {
+    shareLinks = shareLinks.filter(async link => await isValid(link));
+  }
 
   return typeof shareLinks === 'string'
     ? { retcode: 1, result: { errmsg: shareLinks } }

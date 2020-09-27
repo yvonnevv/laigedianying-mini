@@ -2,7 +2,8 @@ import {
     GET_LOGIN_INFO,
     GET_LOGIN_INFO_SUCCESS,
     UPDATE_LOGIN_INFO,
-    // UPDATE_LOGIN_INFO_SUCCESS,
+    SET_DEFAULT_LOGIN_INFO,
+    UPDATE_LOGIN_INFO_SUCCESS,
 } from '../actions';
 
 export function userInfo (state = {
@@ -10,6 +11,7 @@ export function userInfo (state = {
     info: {}
 }, action) {
     const { type } = action;
+
     let update = {};
     switch(type) {
 
@@ -18,7 +20,9 @@ export function userInfo (state = {
         update = { loaded: false };
         break;
 
-    case GET_LOGIN_INFO_SUCCESS: {
+    case GET_LOGIN_INFO_SUCCESS:
+    case SET_DEFAULT_LOGIN_INFO:
+    case UPDATE_LOGIN_INFO_SUCCESS: {
         const { data } = action;
         update = { loaded: true, info: data };
         break;

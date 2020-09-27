@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import Taro from '@tarojs/taro';
 
+import Taro from '@tarojs/taro';
+import { getLoginData } from './assets/utils';
 import configStore from './store';
 
 import './app.less';
 
 const store = configStore();
 
-class App extends Component {
+export default class App extends Component {
 
     componentWillMount () {
         if (process.env.TARO_ENV === 'weapp') {
             Taro.cloud.init();
+            getLoginData(store.dispatch);
         }
     }
 
@@ -24,5 +26,3 @@ class App extends Component {
         );
     }
 }
-
-export default App;

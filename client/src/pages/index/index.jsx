@@ -92,6 +92,12 @@ class Index extends Component {
         );
     }
 
+    renderBanner () {
+        return (
+            <View className='home-banner'></View>
+        );
+    }
+
     render () {
         console.log('RENDER');
         return (
@@ -104,6 +110,7 @@ class Index extends Component {
                 enableFlex
             >
                 {this.renderInput()}
+                {this.renderBanner()}
                 {this.renderScroll()}
             </ScrollView>
         );

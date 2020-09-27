@@ -5,10 +5,12 @@ import { movieList, movieInfo } from './movies';
 import { shareList } from './share';
 import { userInfo } from './login';
 
-export default combineReducers({
+const rootReducers = combineReducers({
+    userInfo,
     articles,
     movieList,
     movieInfo,
-    shareList,
-    userInfo
+    shareList
 });
+
+export default rootReducers;

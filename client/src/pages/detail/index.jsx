@@ -1,18 +1,24 @@
 import React, { Component } from 'react';
+import { AtModal, AtModalContent, AtModalAction } from 'taro-ui';
 import { connect } from 'react-redux';
 import Taro, { Current } from '@tarojs/taro';
 import { View, Text, Image, Button } from '@tarojs/components';
-import './index.less';
-import { getMovieInfo, getShareInfo, clearLastShareList } from '../../actions';
 
-import ICON_QUOTE from './images/icon-quote.png';
+import 'taro-ui/dist/style/components/modal.scss';
+import './index.less';
+
+import { getMovieInfo, getShareInfo, clearLastShareList } from '../../actions';
+import { setUserInfo, updateCoin } from '../../assets/utils';
+
+import ICON_QUOTE from '../../assets/images/icon-quote.png';
 
 class Detail extends Component {
     constructor () {
         super();
         this.statusHeight = 0;
         this.state = {
-            siteIdx: 0
+            siteIdx: 0,
+            isOpened: false
         };
     }
 
@@ -21,18 +27,33 @@ class Detail extends Component {
         const { id, title: kw } = params;
         const { siteIdx } = this.state;
 
-        // 清空一下store
-        this.props.clearList();
-
         this.kw = decodeURIComponent(kw);
         this.kw = decodeURIComponent(this.kw).split(' ')[0];
         this.title = this.kw;
         this.kw = this.kw.substring(0, this.kw.length - 1);
 
-        this.props.fetchMovieInfo({ id });
-        this.props.fetchShareList({ site: siteIdx, kw: this.kw });
+        this.fetchData(id, siteIdx, this.kw);
 
         this.statusHeight = Taro.getSystemInfoSync().statusBarHeight;
+    }
+
+    fetchData (id, site, kw) {
+        // 清空一下store
+        const { dispatch } = this.props;
+        dispatch(clearLastShareList());
+        dispatch(getMovieInfo({ id }));
+        dispatch(getShareInfo({ site, kw }));
+    }
+
+    isLogin () {
+        const { userData } = this.props;
+        return !!Object.keys(userData).length;
+    }
+
+    getUserInfo ({ detail }) {
+        // 拿到用户信息进行下一步处理
+        this.setState({ isOpened: false });
+        setUserInfo(detail, this.props.dispatch);
     }
 
     backToPre () {
@@ -41,9 +62,7 @@ class Detail extends Component {
         if (Taro.getCurrentPages().length > 1) {
             Taro.navigateBack();
         } else {
-            Taro.navigateTo({
-                url: '/pages/search/index'
-            });
+            Taro.switchTab({url: '/pages/index/index'});
         }
     }
 
@@ -58,11 +77,40 @@ class Detail extends Component {
         if (!loaded) return;
         if (info[`site${idx}`].length) return;
 
-        this.props.fetchShareList({ site: idx, kw: this.kw });
+        this.props.dispatch(getShareInfo({ site: idx, kw: this.kw }));
     }
 
-    copyContent (data) {
-        Taro.setClipboardData({ data });
+    copyContent (data, isShowModal) {
+        // 要检查有没有登录
+        const isLogin = this.isLogin();
+        if (!isLogin) {
+            this.setState({ isOpened: true });
+            return;
+        }
+
+        const { userData } = this.props;
+        const { _id, coin, isVip, nick, avatar } = userData;
+        if (!isShowModal || isVip) {
+            Taro.setClipboardData({ data: data || '' });
+            return;
+        }
+        if (coin - 10 <= 0) {
+            Taro.showToast({title: '啊哦，金币数不足啦！分享小程序可以更多金币哦～', icon: 'none'});
+            return;
+        }
+        const __self = this;
+        Taro.showModal({
+            content: `消耗10金币即可复制～\r\n目前剩余金币数: ${coin}`,
+            success (res) {
+                if (res.confirm) {
+                    Taro.setClipboardData({ data });
+                    console.log('__self.props.dispatch', __self.props);
+                    // 前端更新coin储存
+                    const nowCoin = coin - 10;
+                    updateCoin({_id, coin: nowCoin, nick, avatar, isVip }, __self.props.dispatch);
+                }
+            }
+        });
     }
 
     renderStar (star) {
@@ -103,12 +151,12 @@ class Detail extends Component {
                             <Text className='detail-share__item-text'>{item.name}</Text>
                             <Button
                                 size='mini'
-                                onClick={this.copyContent.bind(this, item.shareUrl)}
+                                onClick={this.copyContent.bind(this, item.shareUrl, true)}
                             >
                                 复制链接
                             </Button>
                             <Button
-                                onClick={this.copyContent.bind(this, item.password)}
+                                onClick={this.copyContent.bind(this, item.password, false)}
                                 className='copy-psw'
                                 size='mini'
                             >
@@ -162,12 +210,19 @@ class Detail extends Component {
     renderMain () {
         const { movieInfo } = this.props;
         const { info, loaded } = movieInfo;
+        const { isOpened } = this.state;
         if (!loaded) return null;
 
         const { cover, extraInfo, summary, score, shortText, poster, star } = info;
 
         return (
             <View className='detail'>
+                <AtModal isOpened={isOpened} closeOnClickOverlay>
+                    <AtModalContent className='detail-login__ctn'>啊哦！登录后才可获取哦～</AtModalContent>
+                    <AtModalAction>
+                        <Button className='detail-login__btn' openType='getUserInfo' onGetUserInfo={this.getUserInfo.bind(this)}>立即登录</Button>
+                    </AtModalAction>
+                </AtModal>
                 <View className='detail-bg' style={{height: this.statusHeight + 260}}>
                     <View className='detail-bg__pic'>
                         <Image src={poster} mode='widthFix' />
@@ -205,7 +260,7 @@ class Detail extends Component {
                     <View className='detail-comment'>
                         {ICON_QUOTE && (
                             <View className='detail-comment__icon'>
-                                <Image src='./images/icon-quote.png' />
+                                <Image src='../../assets/images/icon-quote.png' />
                             </View>
                         )}
                         <Text className='detail-comment__text'>{shortText}</Text>
@@ -225,20 +280,7 @@ class Detail extends Component {
 }
 
 export default connect(
-    ({ movieInfo, shareList }) => {
-        return { movieInfo, shareList };
-    },
-    (dispatch) => {
-        return {
-            fetchMovieInfo (params) {
-                return dispatch(getMovieInfo(params));
-            },
-            fetchShareList (params) {
-                return dispatch(getShareInfo(params));
-            },
-            clearList () {
-                dispatch(clearLastShareList());
-            }
-        };
+    ({ movieInfo, shareList, userInfo }) => {
+        return { movieInfo, shareList, userData: userInfo.info };
     }
 )(Detail);

@@ -27,7 +27,7 @@ async function getUser(OPENID) {
 
 async function insertUser(OPENID, info) {
   const { nick, avatar } = info;
-  await db.collection('users').add({
+  const { _id } = await db.collection('users').add({
     data: {
       coin: 100, 
       nick, 
@@ -38,7 +38,13 @@ async function insertUser(OPENID, info) {
     }
   });
 
-  return { coin: 100, isVip: false };
+  return { _id, nick, avatar, coin: 100, isVip: false };
+}
+
+async function updateUserCoin(_id, coin) {
+  await db.collection('users').doc(_id).update({
+    data: { coin }
+  });
 }
 
 /**
@@ -57,12 +63,16 @@ exports.main = async (params) => {
       if (!user) {
         user = await insertUser(OPENID, params);
       }
-      const { isVip, coin } = user;
-      return { retcode: 0, result: { isVip, coin } }
+      const { _id, nick, avatar, coin, isVip } = user;
+      return { retcode: 0, result: { nick, avatar, _id, isVip, coin } }
     }
       
     case 'update':
-      return { retcode: 0 }
+      const { _id, nick, avatar, coin, isVip } = params;
+      updateUserCoin(_id, coin);
+      return { retcode: 0, result: { _id, nick, avatar, coin, isVip } }
+    default:
+      break;
   }
 }
 

@@ -23,9 +23,9 @@ export function articles (state = {
         const all = action.data.map(item => {
             const { content } = item;
             const { news_item } = content;
-            const { thumb_url, title, url } = news_item[0];
+            const { thumb_url, title, url, digest } = news_item[0];
             const itemPrase = {
-                thumbUrl: thumb_url, title, url
+                thumbUrl: thumb_url, title, url, digest
             };
             if (/^(|)((?!《|》).)*$/.test(title)) {
                 list.push(itemPrase);

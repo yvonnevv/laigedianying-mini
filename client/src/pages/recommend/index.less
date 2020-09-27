@@ -1,0 +1,47 @@
+.recommend-articles {
+  margin: 30px 36px;
+  height: 410px;
+  position: relative;
+
+  &__item {
+      height: 410px;
+      background: #ffffff;
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 40px;
+      position: relative;
+
+      &-text {
+          width: 100%;
+          bottom: 0;
+          font-size: 24px;
+          font-weight: bolder;
+          padding-top: 20px;
+          
+          text {
+              padding: 0 20px;
+              white-space: nowrap;
+              max-width: 500px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              display: block;
+              font-size: 32px;
+
+              &.subtitle {
+                font-size: 24px;
+                font-weight: normal;
+                color: #666666;
+              }
+          }
+      }
+
+      image {
+        width: 100%;
+        height: 300px;
+        position: absolute;
+        bottom: 0;
+      }
+  }
+  
+}

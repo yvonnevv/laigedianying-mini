@@ -20,7 +20,7 @@ export default {
         list: [{
             pagePath: 'pages/index/index',
             selectedIconPath: 'assets/images/home-selected.png',
-            iconPath: 'assets/images/home-selected.png',
+            iconPath: 'assets/images/home.png',
             text: '首页'
         }, {
             pagePath: 'pages/recommend/index',

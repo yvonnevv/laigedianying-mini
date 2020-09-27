@@ -1,26 +1,48 @@
 import React, { Component } from 'react';
-import { View } from '@tarojs/components';
+import Taro from '@tarojs/taro';
+import { connect } from 'react-redux';
+import { View, Image, Text } from '@tarojs/components';
+import { getArticles } from '../../actions';
 import './index.less';
 
-import Login from '../../components/login/index';
+class Recommend extends Component {
 
-export default class Index extends Component {
+    componentWillMount () {
+        this.props.dispatch(getArticles({}));
+    }
 
-    componentWillMount () { }
+    showToast () {
+        Taro.showToast({
+            title: '紧张开发中～\r\n请关注公众号【来个电影】查看',
+            icon: 'none'
+        });
+    }
 
-    componentDidMount () { }
+    renderArticles () {
+        const { articles } = this.props;
+        const { info, loaded } = articles;
+        if (!loaded) return null;
 
-    componentWillUnmount () { }
+        const articlesList = info.all.map((item, key) => (
+            <View onClick={this.showToast} className='recommend-articles__item' key={`article_${key}`}>
+                <View className='recommend-articles__item-text'>
+                    <Text>{item.title}</Text>
+                    <Text className='subtitle'>{item.digest}</Text>
+                </View>
+                <Image src={item.thumbUrl}></Image>
+            </View>
+        ));
 
-    componentDidShow () { }
-
-    componentDidHide () { }
-
-    render () {
         return (
-            <View className='index'>
-                <Login />
+            <View className='recommend-articles'>
+                {articlesList}
             </View>
         );
     }
+
+    render () {
+        return this.renderArticles();
+    }
 }
+
+export default connect(({articles}) => { return { articles }; })(Recommend);
