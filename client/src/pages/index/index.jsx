@@ -23,6 +23,14 @@ class Index extends Component {
         this.fetchData();
     }
 
+    onShareAppMessage () {
+        return {
+            success () {
+                console.log('INDEX SHARE');
+            }
+        };
+    }
+
     switchMovieTab (idx) {
         if (this.activeIdx === idx) return;
         this.setState({

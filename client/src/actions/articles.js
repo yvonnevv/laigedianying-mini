@@ -4,7 +4,7 @@ import { getCloudApi } from './utils';
 export const GET_ARTICLE = 'GET_ARTICLE';
 export const GET_ARTICLE_SUCCESS = 'GET_ARTICLE_SUCCESS';
 
-function handleToast (isHide) {
+function handleToast (isHide, time) {
     if (isHide) {
         Taro.hideToast();
         return;
@@ -12,7 +12,7 @@ function handleToast (isHide) {
     Taro.showToast({
         title: '加载中',
         icon: 'loading',
-        duration: 3000
+        duration: time || 3000
     });
 }
 
@@ -31,8 +31,8 @@ function doRequestSuccess (data) {
 
 export function getArticles (params) {
     return dispatch => {
-        handleToast();
-        getCloudApi('wechat', params, ({ item = [] }) => {
+        handleToast(false, 10000);
+        getCloudApi('articles', params, ({ item = [] }) => {
             handleToast(true);
             return dispatch(doRequestSuccess(item));
         });

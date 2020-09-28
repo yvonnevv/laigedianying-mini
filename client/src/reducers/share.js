@@ -1,7 +1,8 @@
 import {
     GET_SHARE,
     GET_SHARE_SUCCESS,
-    CLEAR_SHARE
+    CLEAR_SHARE,
+    UPDATE_GOTTEN_SHARE
 } from '../actions';
 
 export function shareList (state = {
@@ -10,6 +11,7 @@ export function shareList (state = {
         site2: [],
         site3: []
     },
+    got: [],
     loaded: false
 }, action) {
     const { type } = action;
@@ -36,6 +38,15 @@ export function shareList (state = {
                 site2: [],
                 site3: []
             }
+        };
+        break;
+    }
+    case UPDATE_GOTTEN_SHARE: {
+        const { data } = action;
+        const gotten = [...state.got];
+        gotten.push(data);
+        update = {
+            got: gotten
         };
         break;
     }

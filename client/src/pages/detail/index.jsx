@@ -7,10 +7,8 @@ import { View, Text, Image, Button } from '@tarojs/components';
 import 'taro-ui/dist/style/components/modal.scss';
 import './index.less';
 
-import { getMovieInfo, getShareInfo, clearLastShareList } from '../../actions';
+import { getMovieInfo, getShareInfo, clearLastShareList, updateGotten } from '../../actions';
 import { setUserInfo, updateCoin } from '../../assets/utils';
-
-import ICON_QUOTE from '../../assets/images/icon-quote.png';
 
 class Detail extends Component {
     constructor () {
@@ -27,6 +25,7 @@ class Detail extends Component {
         const { id, title: kw } = params;
         const { siteIdx } = this.state;
 
+        this.movieId = id;
         this.kw = decodeURIComponent(kw);
         this.kw = decodeURIComponent(this.kw).split(' ')[0];
         this.title = this.kw;
@@ -88,25 +87,31 @@ class Detail extends Component {
             return;
         }
 
-        const { userData } = this.props;
+        const { userData, shareList } = this.props;
+        const { got } = shareList;
         const { _id, coin, isVip, nick, avatar } = userData;
-        if (!isShowModal || isVip) {
+
+        // 判断一下之前获取过没有
+        const isGotten = got.includes(this.movieId);
+        if (!isShowModal || isVip || isGotten) {
             Taro.setClipboardData({ data: data || '' });
             return;
         }
+
         if (coin - 10 <= 0) {
             Taro.showToast({title: '啊哦，金币数不足啦！分享小程序可以更多金币哦～', icon: 'none'});
             return;
         }
+
         const __self = this;
         Taro.showModal({
             content: `消耗10金币即可复制～\r\n目前剩余金币数: ${coin}`,
             success (res) {
                 if (res.confirm) {
                     Taro.setClipboardData({ data });
-                    console.log('__self.props.dispatch', __self.props);
                     // 前端更新coin储存
                     const nowCoin = coin - 10;
+                    __self.props.dispatch(updateGotten(__self.movieId));
                     updateCoin({_id, coin: nowCoin, nick, avatar, isVip }, __self.props.dispatch);
                 }
             }
@@ -258,11 +263,7 @@ class Detail extends Component {
                         <Text>{extraInfo}</Text>
                     </View>
                     <View className='detail-comment'>
-                        {ICON_QUOTE && (
-                            <View className='detail-comment__icon'>
-                                <Image src='../../assets/images/icon-quote.png' />
-                            </View>
-                        )}
+                        <View className='detail-comment__icon'></View>
                         <Text className='detail-comment__text'>{shortText}</Text>
                     </View>
                     <View className='detail-summary'>

@@ -21,6 +21,7 @@ class Recommend extends Component {
     renderArticles () {
         const { articles } = this.props;
         const { info, loaded } = articles;
+        console.log('loaded', loaded, info);
         if (!loaded) return null;
 
         const articlesList = info.all.map((item, key) => (

@@ -3,6 +3,7 @@ import { getCloudApi } from './utils';
 export const GET_SHARE = 'GET_SHARE';
 export const GET_SHARE_SUCCESS = 'GET_SHARE_SUCCESS';
 export const CLEAR_SHARE = 'CLEAR_SHARE';
+export const UPDATE_GOTTEN_SHARE = 'UPDATE_GOTTEN_SHARE';
 
 function requestAction (type, data) {
     return {
@@ -27,5 +28,11 @@ export function getShareInfo (params) {
 export function clearLastShareList () {
     return dispatch => {
         return dispatch(requestAction(CLEAR_SHARE));
+    };
+}
+
+export function updateGotten (id) {
+    return dispatch => {
+        return dispatch(requestAction(UPDATE_GOTTEN_SHARE, id));
     };
 }
