@@ -4,7 +4,8 @@ export default {
         'pages/recommend/index',
         'pages/me/index',
         'pages/detail/index',
-        'pages/search/index'
+        'pages/search/index',
+        'pages/help/index'
     ],
     window: {
         backgroundTextStyle: 'light',

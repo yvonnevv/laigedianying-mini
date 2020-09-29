@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Taro from '@tarojs/taro';
 import { View, Text, Icon, Button, Image } from '@tarojs/components';
 import { setUserInfo } from '../../assets/utils';
 
@@ -18,6 +19,12 @@ class Me extends Component {
     getUserInfo ({ detail }) {
         // 拿到用户信息进行下一步处理
         setUserInfo(detail, this.props.dispatch);
+    }
+
+    toHelpPage () {
+        Taro.navigateTo({
+            url: '../help/index'
+        });
     }
 
     render () {
@@ -42,7 +49,7 @@ class Me extends Component {
                                 <View><Icon className='icon-coin'></Icon><Text>我的金币</Text></View>
                                 <View className='right'><Text className='icon-arrow'>{userData.coin}</Text></View>
                             </View>
-                            <View className='me-oper__item'>
+                            <View className='me-oper__item' onClick={this.toHelpPage}>
                                 <View><Icon className='icon-help'></Icon><Text>帮助</Text></View>
                                 <View className='right'><Icon className='icon-more'></Icon></View>
                             </View>

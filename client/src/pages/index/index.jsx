@@ -24,10 +24,9 @@ class Index extends Component {
     }
 
     onShareAppMessage () {
+        console.log('SET PAGE');
         return {
-            success () {
-                console.log('INDEX SHARE');
-            }
+            title: '测试测试'
         };
     }
 

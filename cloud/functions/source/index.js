@@ -2,6 +2,7 @@ const cheerio = require('cheerio');
 const { SITE, UA, OPEN } = require('./config');
 const userAgent = UA[Math.floor(Math.random() * UA.length)];
 const request = require('async-request');
+const superagent = require('superagent');
 
 function __parseName(name) {
   let reg = /\]\[|\[|\]/g;
@@ -306,7 +307,6 @@ async function startCrawlJieYou(keyword) {
 async function isValid(url) {
   const docs = await superagent
       .get(url)
-  
   const $ = cheerio.load(docs.text);
   const inValidNode = $('.share-error-left');
   return !inValidNode.length;
@@ -331,12 +331,17 @@ exports.main = async ({ site, kw }) => {
     }
   };
 
+  const finalShareLinks = [];
   // 有效性检测
   if (shareLinks instanceof Array && shareLinks.length) {
-    shareLinks = shareLinks.filter(async link => await isValid(link));
+    await Promise.all(shareLinks.map(async link => {
+      const isValidUrl = await isValid(link.shareUrl)
+      if (isValidUrl) {finalShareLinks.push(link)}
+      return link;
+    }));
   }
 
   return typeof shareLinks === 'string'
     ? { retcode: 1, result: { errmsg: shareLinks } }
-    : { retcode: 0, result: { shareLinks } }
+    : { retcode: 0, result: { shareLinks: finalShareLinks } }
 }
