@@ -62,8 +62,8 @@
           "id": 0,
           "name": "pages/detail/index",
           "pathName": "pages/detail/index",
-          "query": "id=30384019&title=死无对证",
-          "scene": 1044
+          "query": "",
+          "scene": 1007
         },
         {
           "id": -1,
@@ -92,6 +92,13 @@
           "pathName": "pages/help/index",
           "query": "",
           "scene": null
+        },
+        {
+          "id": 5,
+          "name": "pages/index/index",
+          "pathName": "pages/index/index",
+          "query": "",
+          "scene": 1007
         }
       ]
     }

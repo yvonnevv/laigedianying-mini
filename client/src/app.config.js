@@ -1,18 +1,17 @@
 export default {
     pages: [
         'pages/index/index',
-        'pages/recommend/index',
+        // 'pages/recommend/index',
         'pages/me/index',
-        'pages/detail/index',
+        // 'pages/detail/index',
         'pages/search/index',
-        'pages/help/index'
+        // 'pages/help/index'
     ],
     window: {
         backgroundTextStyle: 'light',
         navigationBarBackgroundColor: '#fff',
         navigationBarTitleText: 'WeChat',
-        navigationBarTextStyle: 'black',
-    // navigationStyle: 'custom'
+        navigationBarTextStyle: 'black'
     },
     cloud: true,
     tabBar: {
@@ -24,10 +23,10 @@ export default {
             iconPath: 'assets/images/home.png',
             text: '首页'
         }, {
-            pagePath: 'pages/recommend/index',
-            selectedIconPath: 'assets/images/recommend-selected.png',
-            iconPath: 'assets/images/recommend.png',
-            text: '推荐'
+            pagePath: 'pages/search/index',
+            selectedIconPath: 'assets/images/search-selected.png',
+            iconPath: 'assets/images/search.png',
+            text: '搜索'
         }, {
             pagePath: 'pages/me/index',
             selectedIconPath: 'assets/images/mine-selected.png',

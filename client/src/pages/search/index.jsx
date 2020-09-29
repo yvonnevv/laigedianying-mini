@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, ScrollView, Input, Icon, Image, Text } from '@tarojs/components';
-import { searchMovie, } from '../../actions';
+import { searchMovie } from '../../actions';
+import { setShareInfo } from '../../assets/utils';
 import quotes from './quote';
 
 import MovieList from '../../components/MovieList';

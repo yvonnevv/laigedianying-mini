@@ -149,7 +149,7 @@ class Detail extends Component {
         return (
             <View className='detail-share'>
                 { !loaded && <View className='detail-share__loading'></View> }
-                { loaded && !mapShareList.length && <View className='detail-share__empty'>暂无资源😢</View> }
+                { loaded && !mapShareList.length && <View className='detail-share__empty'>暂无内容😢</View> }
                 {
                     loaded && mapShareList.map((item, key) => (
                         <View key={`share_${key}`} className='detail-share__item'>

@@ -1,5 +1,13 @@
-import Taro from '@tarojs/taro';
+import Taro, { Current } from '@tarojs/taro';
 import { getUserInfo, setDefaultUserInfo, updateUserInfo } from '../../actions';
+import { getCloudApi } from '../../actions/utils';
+
+let scene = 1001;
+const scenes = [1007, 1008, 1044];
+
+export function setScene (curScene) {
+    scene = curScene;
+}
 
 /**
  * 获取登录态
@@ -30,26 +38,38 @@ export function getLoginData (dispatch, success, fail) {
  * @param {*} value
  */
 export function setUserInfo (userinfo, dispatch) {
+    let isFirstLogin = false;
     if (userinfo.errMsg === 'getUserInfo:ok') {
         const rawData = JSON.parse(userinfo.rawData);
         // 拉一下金币
         const userData = Taro.getStorageSync('userData');
-        console.log('userData', userData);
+        console.log('金币userData', userData);
         if (!userData) {
             dispatch(getUserInfo({
                 nick: rawData.nickName,
                 avatar: rawData.avatarUrl
             }, (data) => {
-                console.log('SET STORAGE', data);
+                // 第一次登录
+                const { params } = Current.router;
+                const { shareId } = params;
+
+                if (scenes.includes(scene) && shareId) {
+                    console.log('邀请新用户成功！');
+                    getCloudApi('login', {_id: shareId, type: 'update'});
+                }
+                isFirstLogin = true;
                 Taro.setStorage({
                     key: 'userData',
                     data: JSON.stringify(data)
                 });
+
             }));
         } else {
             dispatch(setDefaultUserInfo(JSON.parse(userData)));
         }
     }
+
+    return isFirstLogin;
 }
 
 export function updateCoin (data, dispatch) {
@@ -59,4 +79,15 @@ export function updateCoin (data, dispatch) {
     });
     // 后台更新
     dispatch(updateUserInfo(data));
+}
+
+export function setShareInfo () {
+    const userData = Taro.getStorageSync('userData');
+    let shareId = '';
+    if (userData) {
+        shareId = JSON.parse(userData)._id;
+    }
+    const { params } = Current.router;
+    console.log('params', params);
+    params.shareId = shareId;
 }

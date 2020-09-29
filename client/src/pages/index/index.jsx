@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import Taro from '@tarojs/taro';
+import Taro, { Current } from '@tarojs/taro';
 import { connect } from 'react-redux';
 import { View, Input, Text, Icon, Image, ScrollView } from '@tarojs/components';
 import { getMovieList } from '../../actions';
+import { setShareInfo } from '../../assets/utils';
 
 import MovieList from '../../components/MovieList';
+import BannerSwiper from '../../components/Swiper';
 
 import './index.less';
 
@@ -21,13 +23,13 @@ class Index extends Component {
 
     componentWillMount () {
         this.fetchData();
+        Taro.showShareMenu({
+            withShareTicket: true
+        });
     }
 
-    onShareAppMessage () {
-        console.log('SET PAGE');
-        return {
-            title: '测试测试'
-        };
+    componentDidMount () {
+        setShareInfo();
     }
 
     switchMovieTab (idx) {
@@ -39,7 +41,7 @@ class Index extends Component {
     }
 
     toSearchPage () {
-        Taro.navigateTo({
+        Taro.switchTab({
             url: '/pages/search/index'
         });
     }
@@ -101,12 +103,11 @@ class Index extends Component {
 
     renderBanner () {
         return (
-            <View className='home-banner'></View>
+            <BannerSwiper bannerList={[1,2]} />
         );
     }
 
     render () {
-        console.log('RENDER');
         return (
             <ScrollView
                 className='home'
@@ -123,6 +124,8 @@ class Index extends Component {
         );
     }
 }
+
+Index.enableShareAppMessage = true;
 
 export default connect(
     ({ movieList }) => { return { movieList }; },

@@ -24,7 +24,7 @@ export function movieList (state = {
         break;
     case GET_MOVIE_LIST_SUCCESS: {
         const { data, isMore } = action;
-        const { subjects, tag } = data;
+        const { subjects = [], tag = [] } = data;
         let { highscore, hot } = state.list;
         tag && (isMore ? highscore.push(...subjects) : highscore = subjects);
         !tag && (isMore ? hot.push(...subjects) : hot = subjects);
