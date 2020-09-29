@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import Taro from '@tarojs/taro';
 import { getLoginData } from './assets/utils';
 import configStore from './store';
+import { getCloudApi } from './actions/utils';
 
 import './app.less';
 
@@ -15,24 +16,22 @@ export default class App extends Component {
         if (process.env.TARO_ENV === 'weapp') {
             Taro.cloud.init();
             getLoginData(store.dispatch);
-
-            Taro.showShareMenu({
-                withShareTicket: true
-            });
         }
     }
 
-    componentDidShow (ops) {
-        console.log('APP-每次启动', ops);
-        // if (ops.shareTicket) {
-        //     Taro.getShareInfo({
-        //         shareTicket: ops.shareTicket,
-        //         success (res) {
-        //             console.log(res);
-        //         // { errMsg: "getShareInfo:ok", iv: "OJX/PX3nna0HHVID9zw==", encryptedData: "Vtnj6nlqduHBWFJKYSyKh4yHDMPuU1Hs7l6iPQCNMZ6U4qCstX…vk2HiraBektRNdOkxHi0FgGVkgSxwQxWz2LQrw==" }
-        //         }
-        //     });
-        // }
+    componentDidShow (opts) {
+        // 是否分享进入
+        const scenes = [1007, 1008, 1044];
+        const { _shareId } = opts.query;
+        console.log('opts', opts);
+        if (scenes.includes(opts.scene) && _shareId) {
+            // 判断有无该用户记录
+            const userData = Taro.getStorageSync('userData');
+            if (!userData) {
+                // 直接调用云函数
+                getCloudApi('login', {_id: _shareId, type: 'update'});
+            }
+        }
     }
 
     render () {

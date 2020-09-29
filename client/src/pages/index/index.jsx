@@ -5,10 +5,12 @@ import { View, Input, Text, Icon, Image, ScrollView } from '@tarojs/components';
 import { getMovieList } from '../../actions';
 
 import MovieList from '../../components/MovieList';
+import BannerSwiper from '../../components/Swiper';
 
 import './index.less';
 
 import LOGO_IMG from '../../assets/images/logo.png';
+import BANNER_IMG1 from '../../assets/images/banner.png';
 
 class Index extends Component {
 
@@ -21,12 +23,20 @@ class Index extends Component {
 
     componentWillMount () {
         this.fetchData();
+        Taro.showShareMenu({
+            withShareTicket: true
+        });
     }
 
     onShareAppMessage () {
+        console.log('SET SHARE');
+        const userData = Taro.getStorageSync('userData');
+        const _id = userData ? JSON.parse(userData)._id : '';
         return {
-            success () {
-                console.log('INDEX SHARE');
+            title: '测试测试',
+            query: {_shareId: _id},
+            success() {
+                console.log('分享成功');
             }
         };
     }
@@ -40,7 +50,7 @@ class Index extends Component {
     }
 
     toSearchPage () {
-        Taro.navigateTo({
+        Taro.switchTab({
             url: '/pages/search/index'
         });
     }
@@ -102,7 +112,8 @@ class Index extends Component {
 
     renderBanner () {
         return (
-            <View className='home-banner'></View>
+            // <View className='home-banner'></View>
+            <BannerSwiper bannerList={[BANNER_IMG1, BANNER_IMG1]} />
         );
     }
 
@@ -124,6 +135,8 @@ class Index extends Component {
         );
     }
 }
+
+Index.enableShareAppMessage = true;
 
 export default connect(
     ({ movieList }) => { return { movieList }; },

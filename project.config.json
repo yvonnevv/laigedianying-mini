@@ -1,92 +1,99 @@
 {
-  "miniprogramRoot": "client/dist/",
-  "cloudfunctionRoot": "cloud/functions/",
-  "projectname": "laigedianying-mini",
-  "description": "laigedianying-mini-program",
-  "appid": "wx2e1bc19181e58553",
-  "setting": {
-    "urlCheck": false,
-    "es6": false,
-    "postcss": false,
-    "preloadBackgroundData": false,
-    "minified": false,
-    "newFeature": true,
-    "coverView": true,
-    "autoAudits": false,
-    "showShadowRootInWxmlPanel": true,
-    "scopeDataCheck": false,
-    "checkInvalidKey": true,
-    "checkSiteMap": true,
-    "uploadWithSourceMap": true,
-    "useMultiFrameRuntime": false,
-    "useApiHook": true,
-    "babelSetting": {
-      "ignore": [],
-      "disablePlugins": [],
-      "outputPath": ""
-    },
-    "useIsolateContext": true,
-    "useCompilerModule": true,
-    "userConfirmedUseCompilerModuleSwitch": false,
-    "packNpmManually": false,
-    "packNpmRelationList": []
-  },
-  "compileType": "miniprogram",
-  "simulatorType": "wechat",
-  "simulatorPluginLibVersion": {},
-  "cloudfunctionTemplateRoot": "cloudfunctionTemplate",
-  "condition": {
-    "search": {
-      "current": -1,
-      "list": []
-    },
-    "conversation": {
-      "current": -1,
-      "list": []
-    },
-    "plugin": {
-      "current": -1,
-      "list": []
-    },
-    "game": {
-      "list": []
-    },
-    "gamePlugin": {
-      "current": -1,
-      "list": []
-    },
-    "miniprogram": {
-      "current": -1,
-      "list": [
-        {
-          "id": 0,
-          "name": "pages/detail/index",
-          "pathName": "pages/detail/index",
-          "query": "id=30384019&title=死无对证",
-          "scene": 1044
-        },
-        {
-          "id": -1,
-          "name": "pages/search/index",
-          "pathName": "pages/search/index",
-          "query": "",
-          "scene": null
-        },
-        {
-          "id": -1,
-          "name": "pages/me/index",
-          "pathName": "pages/me/index",
-          "query": "",
-          "scene": null
-        },
-        {
-          "id": -1,
-          "name": "pages/recommend/index",
-          "pathName": "pages/recommend/index",
-          "query": "",
-          "scene": null
-        }
-      ]
-    }
-  }
+	"miniprogramRoot": "client/dist/",
+	"cloudfunctionRoot": "cloud/functions/",
+	"projectname": "laigedianying-mini",
+	"description": "laigedianying-mini-program",
+	"appid": "wx2e1bc19181e58553",
+	"setting": {
+		"urlCheck": false,
+		"es6": false,
+		"postcss": false,
+		"preloadBackgroundData": false,
+		"minified": false,
+		"newFeature": true,
+		"coverView": true,
+		"autoAudits": false,
+		"showShadowRootInWxmlPanel": true,
+		"scopeDataCheck": false,
+		"checkInvalidKey": true,
+		"checkSiteMap": true,
+		"uploadWithSourceMap": true,
+		"babelSetting": {
+			"ignore": [],
+			"disablePlugins": [],
+			"outputPath": ""
+		},
+		"useIsolateContext": true,
+		"useCompilerModule": false,
+		"userConfirmedUseCompilerModuleSwitch": false,
+		"useMultiFrameRuntime": false,
+		"useApiHook": true,
+		"packNpmManually": false,
+		"packNpmRelationList": []
+	},
+	"compileType": "miniprogram",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
+	"cloudfunctionTemplateRoot": "cloudfunctionTemplate",
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"gamePlugin": {
+			"current": -1,
+			"list": []
+		},
+		"miniprogram": {
+			"current": -1,
+			"list": [
+				{
+					"id": 0,
+					"name": "pages/detail/index",
+					"pathName": "pages/detail/index",
+					"query": "id=30384019&title=死无对证",
+					"scene": 1044
+				},
+				{
+					"id": -1,
+					"name": "pages/search/index",
+					"pathName": "pages/search/index",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/me/index",
+					"pathName": "pages/me/index",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/recommend/index",
+					"pathName": "pages/recommend/index",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 4,
+					"name": "pages/index/index",
+					"pathName": "pages/index/index",
+					"query": "",
+					"scene": 1044
+				}
+			]
+		}
+	}
 }

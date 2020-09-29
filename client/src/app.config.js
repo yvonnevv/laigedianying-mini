@@ -23,15 +23,16 @@ export default {
             iconPath: 'assets/images/home.png',
             text: '首页'
         }, {
-            pagePath: 'pages/recommend/index',
-            selectedIconPath: 'assets/images/recommend-selected.png',
-            iconPath: 'assets/images/recommend.png',
-            text: '推荐'
+            pagePath: 'pages/search/index',
+            selectedIconPath: 'assets/images/search-selected.png',
+            iconPath: 'assets/images/search.png',
+            text: '搜索'
         }, {
             pagePath: 'pages/me/index',
             selectedIconPath: 'assets/images/mine-selected.png',
             iconPath: 'assets/images/mine.png',
             text: '我的'
         }]
-    }
+    },
+    enableShareAppMessage: true
 };
