@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Taro from '@tarojs/taro';
 import { View, Image  } from '@tarojs/components';
+import { setShareInfo } from '../../assets/utils';
 
 import './index.less';
 
@@ -13,6 +14,15 @@ export default class Help extends Component {
 
     componentWillMount () {
         this.statusHeight = Taro.getSystemInfoSync().statusBarHeight;
+
+        Taro.showShareMenu({
+            withShareTicket: true
+        });
+    }
+
+    onShareAppMessage () {
+        const shareData = setShareInfo();
+        return shareData;
     }
 
     backToPre () {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 
 import Taro from '@tarojs/taro';
-import { getLoginData, setScene } from './assets/utils';
+import { getLoginData, setEnterInfo } from './assets/utils';
 import configStore from './store';
 
 import './app.less';
@@ -19,8 +19,12 @@ export default class App extends Component {
     }
 
     componentDidShow (opts) {
-        setScene(opts.scene);
-        console.log('opts', opts);
+        const { scene, query } = opts;
+        const { shareId } = query;
+        if (shareId) {
+            console.log('点别人分享的链接进来的', shareId);
+        }
+        setEnterInfo(scene, shareId);
     }
 
     render () {

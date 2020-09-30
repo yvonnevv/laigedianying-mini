@@ -21,20 +21,18 @@ function requestAction (type, data, isMore) {
 let pageStart = 0;
 let pageLimit = 10;
 
-function handleToast (isHide) {
+function handleLoading (isHide) {
     if (isHide) {
-        Taro.hideToast();
+        Taro.hideLoading();
         return;
     }
-    Taro.showToast({
-        title: '加载中',
-        icon: 'loading',
-        duration: 5000
+    Taro.showLoading({
+        title: '加载中'
     });
 }
 
 export function getMovieList ({ tag, more }) {
-    if (!more) handleToast();
+    if (!more) handleLoading();
     return dispatch => {
         pageStart = more ? pageStart + 10 : 0;
         getCloudApi('douban', {
@@ -45,7 +43,7 @@ export function getMovieList ({ tag, more }) {
                 page_limit: pageLimit
             }
         }, (data) => {
-            if (!more) handleToast(true);
+            if (!more) handleLoading(true);
             return dispatch(requestAction(GET_MOVIE_LIST_SUCCESS, data, more));
         });
 
@@ -54,13 +52,13 @@ export function getMovieList ({ tag, more }) {
 }
 
 export function getMovieInfo (params) {
-    handleToast();
+    handleLoading();
     return dispatch => {
         getCloudApi('douban', {
             type: 'movieInfo',
             params
         }, (data) => {
-            handleToast(true);
+            handleLoading(true);
             return dispatch(requestAction(GET_MOVIE_INFO_SUCCESS, data));
         });
 
@@ -69,14 +67,14 @@ export function getMovieInfo (params) {
 }
 
 export function searchMovie (params, callback) {
-    handleToast();
+    handleLoading();
     return dispatch => {
         getCloudApi('douban', {
             type: 'movieSearch',
             params
         }, (data) => {
             callback && callback();
-            handleToast(true);
+            handleLoading(true);
             return dispatch(requestAction(SEARCH_MOVIE_SUCCESS, data));
         });
 

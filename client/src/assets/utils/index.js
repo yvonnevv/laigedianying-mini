@@ -1,12 +1,13 @@
 import Taro, { Current } from '@tarojs/taro';
-import { getUserInfo, setDefaultUserInfo, updateUserInfo } from '../../actions';
+import { getUserInfo, updateUserInfo } from '../../actions';
 import { getCloudApi } from '../../actions/utils';
 
-let scene = 1001;
+let scene = 1001, shareId = '';
 const scenes = [1007, 1008, 1044];
 
-export function setScene (curScene) {
+export function setEnterInfo (curScene, curShareId) {
     scene = curScene;
+    shareId = curShareId;
 }
 
 /**
@@ -38,38 +39,33 @@ export function getLoginData (dispatch, success, fail) {
  * @param {*} value
  */
 export function setUserInfo (userinfo, dispatch) {
-    let isFirstLogin = false;
+    // let isFirstLogin = false;
     if (userinfo.errMsg === 'getUserInfo:ok') {
         const rawData = JSON.parse(userinfo.rawData);
         // 拉一下金币
-        const userData = Taro.getStorageSync('userData');
-        console.log('金币userData', userData);
-        if (!userData) {
-            dispatch(getUserInfo({
-                nick: rawData.nickName,
-                avatar: rawData.avatarUrl
-            }, (data) => {
-                // 第一次登录
-                const { params } = Current.router;
-                const { shareId } = params;
+        // const userData = Taro.getStorageSync('userData');
+        const updateCoinFn = data => {
+            const isValidShareId = shareId && shareId !== data._id;
+            if (scenes.includes(scene) && isValidShareId) {
+                console.log('邀请新用户成功！', shareId);
+                getCloudApi('login', {_id: shareId, type: 'update'});
+            }
+        };
+        // 初始化小程序或者登录成功都会调用
+        dispatch(getUserInfo({
+            nick: rawData.nickName,
+            avatar: rawData.avatarUrl
+        }, data => {
+            // 第一次登录
+            updateCoinFn(data);
+            // isFirstLogin = true;
+            Taro.setStorage({
+                key: 'userData',
+                data: JSON.stringify(data)
+            });
 
-                if (scenes.includes(scene) && shareId) {
-                    console.log('邀请新用户成功！');
-                    getCloudApi('login', {_id: shareId, type: 'update'});
-                }
-                isFirstLogin = true;
-                Taro.setStorage({
-                    key: 'userData',
-                    data: JSON.stringify(data)
-                });
-
-            }));
-        } else {
-            dispatch(setDefaultUserInfo(JSON.parse(userData)));
-        }
+        }));
     }
-
-    return isFirstLogin;
 }
 
 export function updateCoin (data, dispatch) {
@@ -83,11 +79,21 @@ export function updateCoin (data, dispatch) {
 
 export function setShareInfo () {
     const userData = Taro.getStorageSync('userData');
-    let shareId = '';
+    const { path, params } = Current.router;
+    const { id, title } = params;
+    let userAppId = '', pathStr = `${path}?`;
     if (userData) {
-        shareId = JSON.parse(userData)._id;
+        userAppId = JSON.parse(userData)._id;
+        pathStr += `shareId=${userAppId}&`;
     }
-    const { params } = Current.router;
-    console.log('params', params);
-    params.shareId = shareId;
+    if (id) pathStr += `id=${id}&`;
+    if (title) pathStr += `title=${title}&`;
+
+    pathStr = pathStr.substring(0, pathStr.length - 1);
+    console.log('pathStr', pathStr);
+
+    return {
+        title: '找片不迷路！',
+        path: pathStr
+    };
 }

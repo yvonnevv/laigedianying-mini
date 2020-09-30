@@ -333,7 +333,7 @@ exports.main = async ({ site, kw }) => {
 
   const finalShareLinks = [];
   // 有效性检测
-  if (shareLinks instanceof Array && shareLinks.length) {
+  if (OPEN && shareLinks instanceof Array && shareLinks.length) {
     await Promise.all(shareLinks.map(async link => {
       const isValidUrl = await isValid(link.shareUrl)
       if (isValidUrl) {finalShareLinks.push(link)}

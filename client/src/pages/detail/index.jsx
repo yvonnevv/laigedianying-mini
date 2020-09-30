@@ -8,7 +8,7 @@ import 'taro-ui/dist/style/components/modal.scss';
 import './index.less';
 
 import { getMovieInfo, getShareInfo, clearLastShareList, updateGotten } from '../../actions';
-import { setUserInfo, updateCoin } from '../../assets/utils';
+import { setShareInfo, setUserInfo, updateCoin } from '../../assets/utils';
 
 class Detail extends Component {
     constructor () {
@@ -34,6 +34,15 @@ class Detail extends Component {
         this.fetchData(id, siteIdx, this.kw);
 
         this.statusHeight = Taro.getSystemInfoSync().statusBarHeight;
+
+        Taro.showShareMenu({
+            withShareTicket: true
+        });
+    }
+
+    onShareAppMessage() {
+        const shareData = setShareInfo();
+        return shareData;
     }
 
     fetchData (id, site, kw) {
@@ -279,6 +288,8 @@ class Detail extends Component {
         return this.renderMain();
     }
 }
+
+Detail.enableShareAppMessage = true;
 
 export default connect(
     ({ movieInfo, shareList, userInfo }) => {

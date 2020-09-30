@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Taro from '@tarojs/taro';
 import { View, Swiper, SwiperItem } from '@tarojs/components';
 
 import './index.less';
@@ -14,12 +15,18 @@ export default class BannerSwiper extends Component {
         });
     }
 
+    toHelpPage () {
+        Taro.navigateTo({
+            url: '/pages/help/index'
+        });
+    }
+
     renderSwiper () {
         const { current } = this.state;
         const { bannerList } = this.props;
 
         const swipers = bannerList.map((item, key) => (
-            <SwiperItem key={`swiper_${key}`} className={`swiper_${key}`}>
+            <SwiperItem onClick={this.toHelpPage} key={`swiper_${key}`} className={`swiper_${key}`}>
                 <View className='home-banner__item'></View>
             </SwiperItem>
         ));

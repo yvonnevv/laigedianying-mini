@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Taro from '@tarojs/taro';
 import { connect } from 'react-redux';
 import { View, ScrollView, Input, Icon, Image, Text } from '@tarojs/components';
 import { searchMovie } from '../../actions';
@@ -18,6 +19,17 @@ class Search extends Component {
             inputVal: '',
             isEmptyAll: true
         };
+    }
+
+    componentWillMount () {
+        Taro.showShareMenu({
+            withShareTicket: true
+        });
+    }
+
+    onShareAppMessage () {
+        const shareData = setShareInfo();
+        return shareData;
     }
 
     getQuote () {
@@ -100,6 +112,8 @@ class Search extends Component {
         );
     }
 }
+
+Search.enableShareAppMessage = true;
 
 export default connect(
     ({ movieList }) => movieList,

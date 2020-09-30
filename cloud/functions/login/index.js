@@ -45,8 +45,8 @@ async function updateUserCoin(_id, coin) {
   let updateCoin = coin;
 
   if (updateCoin === undefined) {
-    const user = await db.collection('users').doc(_id);
-    updateCoin = user.coin + 10;
+    const user = await db.collection('users').doc(_id).get();
+    updateCoin = user.data.coin + 10;
   }
 
   await db.collection('users').doc(_id).update({

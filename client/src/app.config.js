@@ -1,11 +1,10 @@
 export default {
     pages: [
         'pages/index/index',
-        // 'pages/recommend/index',
         'pages/me/index',
-        // 'pages/detail/index',
+        'pages/detail/index',
         'pages/search/index',
-        // 'pages/help/index'
+        'pages/help/index'
     ],
     window: {
         backgroundTextStyle: 'light',

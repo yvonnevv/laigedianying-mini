@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Taro, { Current } from '@tarojs/taro';
+import Taro from '@tarojs/taro';
 import { connect } from 'react-redux';
 import { View, Input, Text, Icon, Image, ScrollView } from '@tarojs/components';
 import { getMovieList } from '../../actions';
@@ -28,8 +28,9 @@ class Index extends Component {
         });
     }
 
-    componentDidMount () {
-        setShareInfo();
+    onShareAppMessage () {
+        const shareData = setShareInfo();
+        return shareData;
     }
 
     switchMovieTab (idx) {

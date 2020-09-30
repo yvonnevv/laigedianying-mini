@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Taro from '@tarojs/taro';
 import { View, Text, Icon, Button, Image } from '@tarojs/components';
-import { setUserInfo } from '../../assets/utils';
+import { getLoginData, setUserInfo, setShareInfo } from '../../assets/utils';
 
 import './index.less';
 
@@ -11,9 +11,20 @@ class Me extends Component {
         super();
     }
 
+    componentWillMount () {
+        Taro.showShareMenu({
+            withShareTicket: true
+        });
+    }
+
     isLogin () {
         const { userData } = this.props;
         return !!Object.keys(userData).length;
+    }
+
+    onShareAppMessage () {
+        const shareData = setShareInfo();
+        return shareData;
     }
 
     getUserInfo ({ detail }) {
@@ -25,6 +36,10 @@ class Me extends Component {
         Taro.navigateTo({
             url: '../help/index'
         });
+    }
+
+    onPullDownRefresh () {
+        getLoginData(this.props.dispatch);
     }
 
     render () {
@@ -70,6 +85,8 @@ class Me extends Component {
         );
     }
 }
+
+Me.enableShareAppMessage = true;
 
 export default connect(
     ({ userInfo }) => { return { userData: userInfo.info }; }
