@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Taro from '@tarojs/taro';
 import { connect } from 'react-redux';
-import { View, Input, Text, Icon, Image, ScrollView } from '@tarojs/components';
+import { View, Input, Text, Icon, Image, ScrollView, Ad } from '@tarojs/components';
 import { getMovieList } from '../../actions';
 import { setShareInfo } from '../../assets/utils';
 
@@ -108,6 +108,14 @@ class Index extends Component {
         );
     }
 
+    renderAd () {
+        return (
+            <Ad unit-id='adunit-871f8edb7eb2ca51'
+                ad-intervals={60}
+            />
+        );
+    }
+
     render () {
         return (
             <ScrollView
@@ -120,6 +128,7 @@ class Index extends Component {
             >
                 {this.renderInput()}
                 {this.renderBanner()}
+                {this.renderAd()}
                 {this.renderScroll()}
             </ScrollView>
         );

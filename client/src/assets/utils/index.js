@@ -43,7 +43,7 @@ export function setUserInfo (userinfo, dispatch) {
     if (userinfo.errMsg === 'getUserInfo:ok') {
         const rawData = JSON.parse(userinfo.rawData);
         // 拉一下金币
-        // const userData = Taro.getStorageSync('userData');
+        const userData = Taro.getStorageSync('userData');
         const updateCoinFn = data => {
             const isValidShareId = shareId && shareId !== data._id;
             if (scenes.includes(scene) && isValidShareId) {
@@ -56,14 +56,13 @@ export function setUserInfo (userinfo, dispatch) {
             nick: rawData.nickName,
             avatar: rawData.avatarUrl
         }, data => {
-            // 第一次登录
-            updateCoinFn(data);
+            // 邀请好友判断
+            !userData && updateCoinFn(data);
             // isFirstLogin = true;
             Taro.setStorage({
                 key: 'userData',
                 data: JSON.stringify(data)
             });
-
         }));
     }
 }
@@ -96,4 +95,24 @@ export function setShareInfo () {
         title: '找片不迷路！',
         path: pathStr
     };
+}
+
+export function createRewardedVideoAd (callback) {
+    const vAd = Taro.createRewardedVideoAd({adUnitId: 'adunit-ade8a4318c4bac59'});
+    vAd.onLoad(() => {});
+    vAd.onError((err) => {
+        console.log('拉取失败:', err);
+    });
+    vAd.onClose((res) => {
+        if (res && res.isEnded) {
+            Taro.showToast({
+                title: '(๑•̀ㅂ•́)و✧金币+10',
+                icon: 'success'
+            });
+            callback && callback();
+        } else {
+            console.log('播放中途退出，不下发游戏奖励');
+        }
+    });
+    return vAd;
 }

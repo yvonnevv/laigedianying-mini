@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Taro from '@tarojs/taro';
 import { connect } from 'react-redux';
-import { View, ScrollView, Input, Icon, Image, Text } from '@tarojs/components';
+import { View, ScrollView, Input, Icon, Image, Text, Ad } from '@tarojs/components';
 import { searchMovie } from '../../actions';
 import { setShareInfo } from '../../assets/utils';
 import quotes from './quote';
@@ -60,6 +60,14 @@ class Search extends Component {
         });
     }
 
+    renderAd () {
+        return (
+            <Ad unit-id='adunit-871f8edb7eb2ca51'
+                ad-intervals={60}
+            />
+        );
+    }
+
     renderScroll () {
         return (
             <View className='search-list'>
@@ -107,6 +115,7 @@ class Search extends Component {
         return (
             <ScrollView className='search' scrollY scrollWithAnimation enableFlex>
                 {this.renderInput()}
+                {this.renderAd()}
                 {isEmptyAll ? this.renderEmpty() : this.renderScroll()}
             </ScrollView>
         );

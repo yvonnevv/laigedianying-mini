@@ -5,7 +5,7 @@ import { setShareInfo } from '../../assets/utils';
 
 import './index.less';
 
-import HELP_IMG from './images/help.jpeg';
+import HELP_IMG from './images/help.jpg';
 
 export default class Help extends Component {
     constructor () {
@@ -41,7 +41,7 @@ export default class Help extends Component {
                     onClick={this.backToPre.bind(this)}
                     style={{top: this.statusHeight + 8}}
                 />
-                {HELP_IMG && <Image src='./images/help.jpeg' />}
+                {HELP_IMG && <Image src='./images/help.jpg' />}
             </View>
         );
     }

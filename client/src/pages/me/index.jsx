@@ -2,19 +2,50 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Taro from '@tarojs/taro';
 import { View, Text, Icon, Button, Image } from '@tarojs/components';
-import { getLoginData, setUserInfo, setShareInfo } from '../../assets/utils';
+import {
+    getLoginData, setUserInfo,
+    setShareInfo, createRewardedVideoAd,
+    updateCoin
+} from '../../assets/utils';
 
 import './index.less';
 
 class Me extends Component {
     constructor () {
         super();
+        this.videoAd = null;
     }
 
     componentWillMount () {
         Taro.showShareMenu({
             withShareTicket: true
         });
+
+        this.videoAd = createRewardedVideoAd(() => {
+            const { userData } = this.props;
+            const { _id, coin, isVip, nick, avatar } = userData;
+            updateCoin(
+                {_id, coin: coin + 10, nick, avatar, isVip },
+                this.props.dispatch
+            );
+        });
+
+        console.log('this.videoAd', this.videoAd);
+    }
+
+    showVideo () {
+        // console.log('videoAd', this.videoAd);
+        this.videoAd.show()
+            .catch(() => {
+                this.videoAd.load()
+                    .then(() => this.videoAd.show())
+                    .catch(err => {
+                        Taro.showToast({
+                            title: `视频拉取失败: ${err}`,
+                            icon: 'none'
+                        });
+                    });
+            });
     }
 
     isLogin () {
@@ -68,6 +99,7 @@ class Me extends Component {
                                 <View><Icon className='icon-help'></Icon><Text>帮助</Text></View>
                                 <View className='right'><Icon className='icon-more'></Icon></View>
                             </View>
+                            <Button className='me-oper__item' onClick={this.showVideo.bind(this)} type='primary'>获取金币</Button>
                         </View>
                     ) : (
                         <View className='me-oper'>

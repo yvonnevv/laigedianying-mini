@@ -2,18 +2,19 @@ import React, { Component } from 'react';
 import { AtModal, AtModalContent, AtModalAction } from 'taro-ui';
 import { connect } from 'react-redux';
 import Taro, { Current } from '@tarojs/taro';
-import { View, Text, Image, Button } from '@tarojs/components';
+import { View, Text, Image, Button, Ad } from '@tarojs/components';
 
 import 'taro-ui/dist/style/components/modal.scss';
 import './index.less';
 
 import { getMovieInfo, getShareInfo, clearLastShareList, updateGotten } from '../../actions';
-import { setShareInfo, setUserInfo, updateCoin } from '../../assets/utils';
+import { setShareInfo, setUserInfo, updateCoin, createRewardedVideoAd } from '../../assets/utils';
 
 class Detail extends Component {
     constructor () {
         super();
         this.statusHeight = 0;
+        this.videoAd = null;
         this.state = {
             siteIdx: 0,
             isOpened: false
@@ -38,9 +39,18 @@ class Detail extends Component {
         Taro.showShareMenu({
             withShareTicket: true
         });
+
+        this.videoAd = createRewardedVideoAd(() => {
+            const { userData } = this.props;
+            const { _id, coin, isVip, nick, avatar } = userData;
+            updateCoin(
+                {_id, coin: coin + 10, nick, avatar, isVip },
+                this.props.dispatch
+            );
+        });
     }
 
-    onShareAppMessage() {
+    onShareAppMessage () {
         const shareData = setShareInfo();
         return shareData;
     }
@@ -102,17 +112,25 @@ class Detail extends Component {
 
         // 判断一下之前获取过没有
         const isGotten = got.includes(this.movieId);
+        const __self = this;
+
         if (!isShowModal || isVip || isGotten) {
             Taro.setClipboardData({ data: data || '' });
             return;
         }
 
-        if (coin - 10 <= 0) {
-            Taro.showToast({title: '啊哦，金币数不足啦！分享小程序可以更多金币哦～', icon: 'none'});
+        if (coin - 20 <= 0) {
+            Taro.showModal({
+                content: '啊哦，金币数不足啦！\r\n观看视频即可获得金币哦！',
+                success (res) {
+                    if (res.confirm) {
+                        __self.showVideo();
+                    }
+                }
+            });
             return;
         }
 
-        const __self = this;
         Taro.showModal({
             content: `消耗10金币即可复制～\r\n目前剩余金币数: ${coin}`,
             success (res) {
@@ -125,6 +143,20 @@ class Detail extends Component {
                 }
             }
         });
+    }
+
+    showVideo () {
+        this.videoAd.show()
+            .catch(() => {
+                this.videoAd.load()
+                    .then(() => this.videoAd.show())
+                    .catch(err => {
+                        Taro.showToast({
+                            title: `视频拉取失败: ${err}`,
+                            icon: 'none'
+                        });
+                    });
+            });
     }
 
     renderStar (star) {
@@ -149,16 +181,13 @@ class Detail extends Component {
         );
     }
 
-    renderShareList () {
-        const { siteIdx } = this.state;
-        const { shareList } = this.props;
-        const { loaded, info } = shareList;
-        const mapShareList = info[`site${siteIdx}`] || [];
-
+    renderShareList (loaded, mapShareList) {
         return (
             <View className='detail-share'>
                 { !loaded && <View className='detail-share__loading'></View> }
-                { loaded && !mapShareList.length && <View className='detail-share__empty'>暂无内容😢</View> }
+                { loaded && !mapShareList.length &&
+                    <View className='detail-share__empty'>{decodeURIComponent('%E6%B2%A1%E6%9C%89%E6%89%BE%E5%88%B0%E5%93%A6')}😭</View>
+                }
                 {
                     loaded && mapShareList.map((item, key) => (
                         <View key={`share_${key}`} className='detail-share__item'>
@@ -167,14 +196,14 @@ class Detail extends Component {
                                 size='mini'
                                 onClick={this.copyContent.bind(this, item.shareUrl, true)}
                             >
-                                复制链接
+                                {decodeURIComponent('%E5%A4%8D%E5%88%B6%E9%93%BE%E6%8E%A5')}
                             </Button>
                             <Button
                                 onClick={this.copyContent.bind(this, item.password, false)}
                                 className='copy-psw'
                                 size='mini'
                             >
-                                复制密码
+                                {decodeURIComponent('%E5%A4%8D%E5%88%B6%E5%AF%86%E7%A0%81')}
                             </Button>
                         </View>
                     ))
@@ -191,35 +220,49 @@ class Detail extends Component {
                     onClick={this.switchMovieTab.bind(this, 0)}
                     className={`detail-tab__item ${!siteIdx ? 'active' : ''}`}
                 >
-                    <Text className='detail-tab__text'>站点1</Text>
+                    <Text className='detail-tab__text'>平台1</Text>
                 </View>
                 <View
                     onClick={this.switchMovieTab.bind(this, 1)}
                     className={`detail-tab__item ${siteIdx === 1 ? 'active' : ''}`}
                 >
-                    <Text className='detail-tab__text'>站点2</Text>
+                    <Text className='detail-tab__text'>平台2</Text>
                 </View>
                 <View
                     onClick={this.switchMovieTab.bind(this, 2)}
                     className={`detail-tab__item ${siteIdx === 2 ? 'active' : ''}`}
                 >
-                    <Text className='detail-tab__text'>站点3</Text>
+                    <Text className='detail-tab__text'>平台3</Text>
                 </View>
             </View>
         );
     }
 
     renderSiteSwitch () {
+        const { siteIdx } = this.state;
+        const { shareList } = this.props;
+        const { loaded, info, open } = shareList;
+        if (!open) return null;
+
+        const mapShareList = info[`site${siteIdx}`] || [];
+
         return (
             <View className='detail-other'>
                 {this.renderSwitchTab()}
                 <View className='detail-tip'>
-                    👉 点击复制链接到浏览器打开哟！
+                    👉 {decodeURIComponent('%E7%82%B9%E5%87%BB%E5%A4%8D%E5%88%B6%E9%93%BE%E6%8E%A5%E5%88%B0%E6%B5%8F%E8%A7%88%E5%99%A8%E6%89%93%E5%BC%80%E5%93%9F%EF%BC%81')}
                 </View>
-                {this.renderShareList()}
+                {this.renderShareList(loaded, mapShareList)}
             </View>
         );
     }
+
+    renderAd () {
+        return (
+            <Ad unit-id='adunit-adb17a63fc2a61f3' ad-type='grid' grid-opacity='0.8' grid-count='5' ad-theme='white' />
+        );
+    }
+
 
     renderMain () {
         const { movieInfo } = this.props;
@@ -278,6 +321,7 @@ class Detail extends Component {
                     <View className='detail-summary'>
                         <Text>{summary}</Text>
                     </View>
+                    {this.renderAd()}
                     {this.renderSiteSwitch()}
                 </View>
             </View>

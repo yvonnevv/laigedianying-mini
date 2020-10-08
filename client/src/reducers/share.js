@@ -12,6 +12,7 @@ export function shareList (state = {
         site3: []
     },
     got: [],
+    open: true,
     loaded: false
 }, action) {
     const { type } = action;
@@ -23,11 +24,11 @@ export function shareList (state = {
         break;
     case GET_SHARE_SUCCESS: {
         const { data } = action;
-        const { site, shareLinks } = data;
+        const { site, shareLinks, open } = data;
         const info = Object.assign({}, state.info, {
             [`site${site}`]: shareLinks
         });
-        update = { loaded: true, info };
+        update = { loaded: true, info, open };
         break;
     }
     case CLEAR_SHARE: {
