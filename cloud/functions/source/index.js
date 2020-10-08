@@ -343,5 +343,5 @@ exports.main = async ({ site, kw }) => {
 
   return typeof shareLinks === 'string'
     ? { retcode: 1, result: { errmsg: shareLinks } }
-    : { retcode: 0, result: { shareLinks: finalShareLinks } }
+    : { retcode: 0, result: { shareLinks: finalShareLinks, open: OPEN } }
 }
