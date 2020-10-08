@@ -32,7 +32,7 @@ class Detail extends Component {
         this.title = this.kw;
         this.kw = this.kw.substring(0, this.kw.length - 1);
 
-        this.fetchData(id, siteIdx, this.kw);
+        this.fetchData(id, siteIdx, this.title);
 
         this.statusHeight = Taro.getSystemInfoSync().statusBarHeight;
 
