@@ -104,7 +104,7 @@ class Index extends Component {
 
     renderBanner () {
         return (
-            <BannerSwiper bannerList={[1,2]} />
+            <BannerSwiper bannerList={[1, 2]} />
         );
     }
 

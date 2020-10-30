@@ -2,6 +2,7 @@
 // 部署：在 cloud-functions/login 文件夹右击选择 “上传并部署”
 
 const cloud = require('wx-server-sdk')
+const { OPEN } = require('./config');
 
 // 初始化 cloud
 cloud.init({
@@ -29,7 +30,7 @@ async function insertUser(OPENID, info, date) {
   const { nick, avatar } = info;
   const { _id } = await db.collection('users').add({
     data: {
-      coin: 200, 
+      coin: 100, 
       nick, 
       avatar, 
       isVip: false, 
@@ -39,7 +40,7 @@ async function insertUser(OPENID, info, date) {
     }
   });
 
-  return { _id, nick, avatar, coin: 200, isVip: false };
+  return { _id, nick, avatar, coin: 100, isVip: false };
 }
 
 async function updateUserCoin(_id, coin, date) {
@@ -87,7 +88,7 @@ exports.main = async (params) => {
       }
     
       const { _id, nick, avatar, isVip } = user;
-      return { retcode: 0, result: { nick, avatar, _id, isVip, coin: nowCoin } }
+      return { retcode: 0, result: { nick, avatar, _id, isVip, coin: nowCoin, open: OPEN } }
     }
       
     case 'update':
