@@ -106,6 +106,13 @@
           "pathName": "pages/index/index",
           "query": "shareId=d782d4875f6f713600729eee29a9431c",
           "scene": 1007
+        },
+        {
+          "id": -1,
+          "name": "pages/member/index",
+          "pathName": "pages/member/index",
+          "query": "",
+          "scene": null
         }
       ]
     }

@@ -16,9 +16,15 @@ export default class BannerSwiper extends Component {
     }
 
     toHelpPage (key) {
-        Taro.navigateTo({
-            url: key ? '/pages/help/index' : '/pages/me/index'
-        });
+        if (key) {
+            Taro.navigateTo({
+                url: '/pages/help/index'
+            });
+        } else {
+            Taro.switchTab({
+                url: '/pages/me/index'
+            });
+        }
     }
 
     renderSwiper () {

@@ -4,7 +4,8 @@ export default {
         'pages/me/index',
         'pages/detail/index',
         'pages/search/index',
-        'pages/help/index'
+        'pages/help/index',
+        'pages/member/index'
     ],
     window: {
         backgroundTextStyle: 'light',

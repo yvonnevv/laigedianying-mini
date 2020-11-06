@@ -121,6 +121,10 @@ class Me extends Component {
         )
     }
 
+    toMemberPage() {
+      Taro.navigateTo({ url: '/pages/member/index' });
+    }
+
     render () {
         const isLogin = this.isLogin();
         const { userData } = this.props;
@@ -159,6 +163,7 @@ class Me extends Component {
                                 <View className='right'><Icon className='icon-more'></Icon></View>
                             </View>
                             { userData.open && <Button className='me-oper__item' onClick={this.showConfirm.bind(this)} type='primary'>获取金币</Button>}
+                            { userData.isAdmin && <Button onClick={this.toMemberPage.bind(this)} className='me-oper__item member'>会员管理</Button> }
                         </View>
                     ) : (
                         <View className='me-oper'>
