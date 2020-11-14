@@ -29,12 +29,9 @@ class Me extends Component {
                 this.props.dispatch
             );
         });
-
-        console.log('this.videoAd', this.videoAd);
     }
 
     showVideo () {
-        // console.log('videoAd', this.videoAd);
         this.videoAd.show()
             .catch(() => {
                 this.videoAd.load()

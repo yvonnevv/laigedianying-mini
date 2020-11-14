@@ -106,7 +106,7 @@ export function createRewardedVideoAd (callback) {
     vAd.onClose((res) => {
         if (res && res.isEnded) {
             Taro.showToast({
-                title: '(๑•̀ㅂ•́)و✧金币+10',
+                title: '金币+10！',
                 icon: 'success'
             });
             callback && callback();
