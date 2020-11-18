@@ -11,6 +11,7 @@ import MovieList from '../../components/MovieList';
 import './index.less';
 
 import LOGO_IMG from '../../assets/images/logo.png';
+import SEARCH_BANNER_IMG from '../../assets/images/search-vip.png';
 
 class Search extends Component {
     constructor () {
@@ -66,6 +67,12 @@ class Search extends Component {
                 ad-intervals={60}
             />
         );
+    }
+
+    renderBanner() {
+        return (
+          <View className="search-banner">{SEARCH_BANNER_IMG && <Image src={SEARCH_BANNER_IMG} />}</View>
+        )
     }
 
     renderScroll () {

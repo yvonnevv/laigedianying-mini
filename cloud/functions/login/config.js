@@ -1,8 +1,7 @@
 exports.SITE = [
-  'http://a12.lovewindy.cn/supersearch/?kw=',
-  'http://520.lxxh1.com/?s=',
-  'http://m.024uf.cn/?s=',
-  'http://laigedianying.club/api/movienocrawl?keyword='
+  'http://a59.lovewindy.cn/supersearch?kw=',
+  'http://www.lxxh1.com/?s=',
+  'http://m.024uf.cn/?s='
 ]
 
 exports.UA = [

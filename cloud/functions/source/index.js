@@ -39,13 +39,23 @@ async function __crawlContent(url) {
 }
 
 /**
+ * 补充站点 来个数据库
+ * @param {*} keyword 
+ */
+async function requestLaige(keyword) {
+  const { body } = await request(`${SITE[3]}${encodeURIComponent(keyword)}`);
+  const { localMovies } = JSON.parse(body);
+  return localMovies;
+}
+
+/**
  * 站点1：lili
  * @param {*} keyword 
  */
 async function startCrawlLiLi(keyword) {
   try {
+    let shareLinks = [];
     const wrapperUrl = `${SITE[0]}${encodeURIComponent(keyword)}`;
-    const shareLinks = [];
     const docs = await __crawlContent(wrapperUrl);
     const $ = cheerio.load(docs);
     // 有无找到
@@ -118,6 +128,11 @@ async function startCrawlLiLi(keyword) {
         });
       });
     }));
+
+    if (!shareLinks.length) {
+      shareLinks = await requestLaige(keyword);
+    }
+
     return shareLinks;
   } catch (error) {
     return `get lili error ${error.message}`;

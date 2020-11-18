@@ -2,6 +2,7 @@
 // 部署：在 cloud-functions/login 文件夹右击选择 “上传并部署”
 
 const cloud = require('wx-server-sdk')
+const { OPEN } = require('./config');
 
 // 初始化 cloud
 cloud.init({
@@ -13,23 +14,27 @@ const db = cloud.database({
   env: cloud['laigedianying-mini']
 });
 
-async function getUser(OPENID) {
-  const users = await db.collection('users').where({
-    _openid: OPENID
-  }).get();
-
-  console.log('get users', users, OPENID);
+async function getUserByOpenId(OPENID) {
+  const users = await db.collection('users').where({ _openid: OPENID }).get();
 
   if (!users.data.length) return null;
 
   return (users.data)[0];
 }
 
+async function getUserByNick(nick) {
+  const users = await db.collection('users').where({ nick }).get();
+
+  if (!users.data.length) return null;
+
+  return (users.data);
+}
+
 async function insertUser(OPENID, info, date) {
   const { nick, avatar } = info;
   const { _id } = await db.collection('users').add({
     data: {
-      coin: 200, 
+      coin: 100, 
       nick, 
       avatar, 
       isVip: false, 
@@ -39,7 +44,7 @@ async function insertUser(OPENID, info, date) {
     }
   });
 
-  return { _id, nick, avatar, coin: 200, isVip: false };
+  return { _id, nick, avatar, coin: 100, isVip: false };
 }
 
 async function updateUserCoin(_id, coin, date) {
@@ -67,7 +72,7 @@ exports.main = async (params) => {
   switch (params.type) {
     case 'get': {
       // 查找
-      let user = await getUser(OPENID);
+      let user = await getUserByOpenId(OPENID);
       let nowCoin = 0;
       // 插入
       if (!user) {
@@ -77,23 +82,34 @@ exports.main = async (params) => {
         // 是否今日首次登录
         const { activeDate, coin, _id } = user;
         nowCoin = coin;
-        
-        // 去掉加金币
-        // if (today !== activeDate) {
-        //   // 每天登录加10
-        //   nowCoin = coin + 10;
-        //   updateUserCoin(_id, nowCoin, today);
-        // }
       }
     
-      const { _id, nick, avatar, isVip } = user;
-      return { retcode: 0, result: { nick, avatar, _id, isVip, coin: nowCoin } }
+      const { _id, nick, avatar, isVip, isAdmin } = user;
+      return { retcode: 0, result: { nick, avatar, _id, isVip, coin: nowCoin, open: OPEN, isAdmin } }
+    }
+
+    case 'search': {
+      let user = await getUserByNick(params.nick);
+      return { retcode: 0, result: user }
     }
       
     case 'update':
       const { _id, nick, avatar, coin, isVip } = params;
       updateUserCoin(_id, coin, today);
       return { retcode: 0, result: { _id, nick, avatar, coin, isVip } }
+    
+    case 'setVip': {
+      const { errMsg } = await db.collection('users').doc(params._id).update({
+        data: Object.assign({ isVip: params.setVip }, params.setVip ? { coin: 10000 } : {})
+      });
+      let result = { errMsg: null };
+      if (errMsg !== 'document.update:ok') {
+        result.errMsg = errMsg;
+      }
+
+      return { retcode: 0, result }
+    }
+
     default:
       break;
   }

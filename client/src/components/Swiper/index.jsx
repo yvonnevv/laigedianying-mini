@@ -15,10 +15,16 @@ export default class BannerSwiper extends Component {
         });
     }
 
-    toHelpPage () {
-        Taro.navigateTo({
-            url: '/pages/help/index'
-        });
+    toHelpPage (key) {
+        if (key) {
+            Taro.navigateTo({
+                url: '/pages/help/index'
+            });
+        } else {
+            Taro.switchTab({
+                url: '/pages/me/index'
+            });
+        }
     }
 
     renderSwiper () {
@@ -26,7 +32,7 @@ export default class BannerSwiper extends Component {
         const { bannerList } = this.props;
 
         const swipers = bannerList.map((item, key) => (
-            <SwiperItem onClick={this.toHelpPage} key={`swiper_${key}`} className={`swiper_${key}`}>
+            <SwiperItem onClick={this.toHelpPage.bind(this, key)} key={`swiper_${key}`} className={`swiper_${key}`}>
                 <View className='home-banner__item'></View>
             </SwiperItem>
         ));

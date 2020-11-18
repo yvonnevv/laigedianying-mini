@@ -17,7 +17,8 @@ class Detail extends Component {
         this.videoAd = null;
         this.state = {
             siteIdx: 0,
-            isOpened: false
+            isOpened: false,
+            isChargeOpened: false
         };
     }
 
@@ -120,15 +121,7 @@ class Detail extends Component {
         }
 
         if (coin - 20 <= 0) {
-            Taro.showModal({
-                content: '啊哦，金币数不足啦！\r\n观看视频即可获得金币哦！',
-                success (res) {
-                    if (res.confirm) {
-                        __self.showVideo();
-                    }
-                }
-            });
-            return;
+            this.showConfirm();
         }
 
         Taro.showModal({
@@ -143,6 +136,48 @@ class Detail extends Component {
                 }
             }
         });
+    }
+
+    copyChargeContent(type) {
+      const data = type 
+          ? '1👈fu置该句€X3AdcjX3j1c€回👉闲鱼或手机淘tao宝👈或点几连结 https://m.tb.cn/h.4XdA6si 至流览器【我在闲鱼发布了【来个电影会员VIP专拍】】'
+          : 'Checky123';
+
+      Taro.setClipboardData({ data });
+  }
+
+    showConfirm() {
+        const __self = this;
+        Taro.showModal({
+            content: '啊哦，金币数不足啦！\n\n请选择金币领取的方式哦～',
+            confirmText: '永久VIP',
+            cancelText: '广告获取',
+            success (res) {
+                if (res.confirm) {
+                    __self.setModalVisible(true);
+                } else {
+                    __self.showVideo();
+                }
+            }
+        });
+    }
+
+    setModalVisible (show) {
+        this.setState({ isChargeOpened: show });
+    }
+
+    renderContent() {
+        return (
+            <View className="detail-charge">
+                <View className="detail-charge__tit"><Text>¥9.9充值VIP永久免费获取汁源</Text></View>
+                <View className="detail-charge__way">
+                    <View>方法1：添加管理员微信 Checky123 购买<Button size="mini" onClick={this.copyChargeContent.bind(this, 0)}>复制微信</Button></View>
+                </View>
+                <View className="detail-charge__way">
+                    <View>方法2：闲鱼担保购买<Button size="mini" onClick={this.copyChargeContent.bind(this, 1)}>复制到闲鱼打开</Button></View>
+                </View>
+            </View>
+        )
     }
 
     showVideo () {
@@ -267,7 +302,7 @@ class Detail extends Component {
     renderMain () {
         const { movieInfo } = this.props;
         const { info, loaded } = movieInfo;
-        const { isOpened } = this.state;
+        const { isOpened, isChargeOpened } = this.state;
         if (!loaded) return null;
 
         const { cover, extraInfo, summary, score, shortText, poster, star } = info;
@@ -278,6 +313,12 @@ class Detail extends Component {
                     <AtModalContent className='detail-login__ctn'>啊哦！登录后才可获取哦～</AtModalContent>
                     <AtModalAction>
                         <Button className='detail-login__btn' openType='getUserInfo' onGetUserInfo={this.getUserInfo.bind(this)}>立即登录</Button>
+                    </AtModalAction>
+                </AtModal>
+                <AtModal isOpened={isChargeOpened} closeOnClickOverlay>
+                    <AtModalContent className='detail-charge__ctn'>{this.renderContent()}</AtModalContent>
+                    <AtModalAction>
+                        <Button className='detail-charge__btn' onClick={this.setModalVisible.bind(this, false)}>关闭</Button>
                     </AtModalAction>
                 </AtModal>
                 <View className='detail-bg' style={{height: this.statusHeight + 260}}>
