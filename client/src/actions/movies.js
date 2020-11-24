@@ -60,6 +60,15 @@ export function getMovieInfo (params) {
         }, (data) => {
             handleLoading(true);
             return dispatch(requestAction(GET_MOVIE_INFO_SUCCESS, data));
+        }, () => {
+          handleLoading(true);
+          Taro.showToast({
+            icon: 'none',
+            title: '暂未搜索到'
+          });
+          setTimeout(() => {
+            Taro.navigateBack();
+          }, 1200);
         });
 
         return dispatch(requestAction(GET_MOVIE_INFO));

@@ -98,7 +98,7 @@ class Me extends Component {
 
     copyContent(type) {
         const data = type 
-            ? '1👈fu置该句€X3AdcjX3j1c€回👉闲鱼或手机淘tao宝👈或点几连结 https://m.tb.cn/h.4XdA6si 至流览器【我在闲鱼发布了【来个电影会员VIP专拍】】'
+            ? '0.0€OrbmcNNpm9o€打кǎI👉闲鱼或手机淘tao宝👈或點几url链 https://m.tb.cn/h.4e3DfEL 至流蓝琪【快来捡漏【来个电影会员VIP】】'
             : 'Checky123';
 
         Taro.setClipboardData({ data });

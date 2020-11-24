@@ -63,7 +63,7 @@ export function movieList (state = {
 
 export function movieInfo (state = {
     info: {},
-    loaded: false
+    loaded: true
 }, action) {
     const { type } = action;
     let update = {};

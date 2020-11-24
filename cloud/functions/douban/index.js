@@ -54,9 +54,13 @@ async function getMovieInfo({
     id
 }) {
     const uri = `${DOUBAN.info}/${id}`;
+    console.log('uri--->', uri);
+
     try {
         const docs = await superagent.get(uri);
         const $ = cheerio.load(docs.text);
+
+        console.log('docs--->', docs);
 
         let summary = $('#link-report span.all').text().trim();
         if (!summary) {
@@ -110,6 +114,7 @@ async function getMovieInfo({
         }
 
     } catch (error) {
+        console.log('error', error);
         return {
             retcode: 1,
             errmsg: `get douban info api error: ${error}`

@@ -18,8 +18,16 @@ class Search extends Component {
         super();
         this.state = {
             inputVal: '',
-            isEmptyAll: true
+            isEmptyAll: true,
+            quote: {}
         };
+    }
+
+    componentDidMount() {
+      const quote = this.getQuote();
+      this.setState({
+        quote
+      });
     }
 
     componentWillMount () {
@@ -40,8 +48,9 @@ class Search extends Component {
 
     onSearchConfirm ({ detail }) {
         const { value: name } = detail;
-
-        this.props.searchMovie(name, () => {
+        const { inputVal } = this.state;
+        console.log('inputVal', inputVal);
+        this.props.searchMovie(name || inputVal, () => {
             this.setState({
                 inputVal: '',
                 isEmptyAll: false
@@ -94,9 +103,9 @@ class Search extends Component {
                         type='search'
                         value={this.state.inputVal}
                         onConfirm={this.onSearchConfirm.bind(this)}
-                        onChange={this.onChange.bind(this)}
+                        onInput={this.onChange.bind(this)}
                     />
-                    <Icon className='search-input__main-icon' type='search' size='14' />
+                    <View className="search-input__icon" onClick={this.onSearchConfirm.bind(this)}><Icon className='search-input__main-icon' type='search' size='14' /></View>
                 </View>
                 {LOGO_IMG && <Image className='search-input__logo' src='../../assets/images/logo.png' />}
             </View>
@@ -104,7 +113,7 @@ class Search extends Component {
     }
 
     renderEmpty () {
-        const quote = this.getQuote();
+        const { quote } = this.state;
         return (
             <View className='search-quote'>
                 <View className='search-quote__icon first'></View>

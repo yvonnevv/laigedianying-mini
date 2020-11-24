@@ -30,9 +30,9 @@ class Detail extends Component {
         this.movieId = id;
         this.kw = decodeURIComponent(kw);
         this.kw = decodeURIComponent(this.kw).split(' ')[0];
-        this.title = this.kw;
+        this.title = (this.kw).trim();
         this.kw = this.kw.substring(0, this.kw.length - 1);
-
+        console.log('search', this.title);
         this.fetchData(id, siteIdx, this.title);
 
         this.statusHeight = Taro.getSystemInfoSync().statusBarHeight;
@@ -96,7 +96,7 @@ class Detail extends Component {
         if (!loaded) return;
         if (info[`site${idx}`].length) return;
 
-        this.props.dispatch(getShareInfo({ site: idx, kw: this.kw }));
+        this.props.dispatch(getShareInfo({ site: idx, kw: this.title }));
     }
 
     copyContent (data, isShowModal) {

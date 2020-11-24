@@ -328,9 +328,9 @@ async function isValid(url) {
 }
 
 exports.main = async ({ site, kw }) => {
-  kw = kw.split('：')[0];
+  kw = kw.substring(0, kw.length - 1).split('：')[0];
   let shareLinks = [];
-  if (OPEN) {
+  if (OPEN && !/末日逃/.test(kw)) {
     switch (site) {
       case 0:
         shareLinks = await startCrawlLiLi(kw);
